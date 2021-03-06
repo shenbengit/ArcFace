@@ -11,15 +11,17 @@ data class FaceFeatureDataBean(
     /**
      * 泛型数据
      */
-    private val bean: Any,
+    private val data: Any,
     /**
      * 人脸特征码二进制数据
      */
     val feature: ByteArray
 ) {
+    val dataClass = data::javaClass
+
     @Suppress("UNCHECKED_CAST")
-    fun <T> getBean(): T {
-        return bean as T
+    fun <T> getData(): T {
+        return data as T
     }
 
     override fun equals(other: Any?): Boolean {
@@ -28,14 +30,14 @@ data class FaceFeatureDataBean(
 
         other as FaceFeatureDataBean
 
-        if (bean != other.bean) return false
+        if (data != other.data) return false
         if (!feature.contentEquals(other.feature)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = bean.hashCode()
+        var result = data.hashCode()
         result = 31 * result + feature.contentHashCode()
         return result
     }

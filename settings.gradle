@@ -1,4 +1,4 @@
-include ':lib-v8a'
+include ':demo'
 include ':lib'
-include ':app'
+include ':lib-v8a'
 rootProject.name = "ArcFace"

@@ -2,7 +2,6 @@ package com.shencoder.arcface.face
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.arcsoft.face.*
 import com.arcsoft.face.enums.DetectFaceOrientPriority
 import com.arcsoft.face.enums.DetectMode
@@ -318,17 +317,23 @@ internal class FaceHelper(
                         faceInfoList,
                         imageQualityList
                     )
-                    if (imageQualityResult == ErrorInfo.MOK) {
-                        val size = imageQualityList.size
-                        for (index in 0 until size) {
-                            facePreviewInfo[index].imageQuality = imageQualityList[index]
+                    when (imageQualityResult) {
+                        ErrorInfo.MOK -> {
+                            val size = imageQualityList.size
+                            for (index in 0 until size) {
+                                facePreviewInfo[index].imageQuality = imageQualityList[index]
+                            }
                         }
-                    } else {
-                        onError(
-                            FaceErrorType.IMAGE_QUALITY,
-                            imageQualityResult,
-                            FaceConstant.getFaceErrorMsg(imageQualityResult)
-                        )
+                        ErrorInfo.MERR_FSDK_FACEFEATURE_LOW_CONFIDENCE_LEVEL -> {
+                            //人脸置信度低，忽略
+                        }
+                        else -> {
+                            onError(
+                                FaceErrorType.IMAGE_QUALITY,
+                                imageQualityResult,
+                                FaceConstant.getFaceErrorMsg(imageQualityResult)
+                            )
+                        }
                     }
                 }
                 //开始识别

@@ -126,7 +126,10 @@ class FaceServer {
      * 通过Bitmap提取特征码
      * 需要在子线程运行，避免主线程卡死
      */
-    fun extractFaceFeature(bitmap: Bitmap): ByteArray? {
+    fun extractFaceFeature(bitmap: Bitmap?): ByteArray? {
+        if (bitmap == null) {
+            return null
+        }
         var feature: ByteArray? = null
         val alignedBitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true)
         val imageData = ArcSoftImageUtil.createImageData(

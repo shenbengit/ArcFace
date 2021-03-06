@@ -7,9 +7,6 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
-import com.arcsoft.face.AgeInfo
-import com.arcsoft.face.GenderInfo
-import com.arcsoft.face.LivenessInfo
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**

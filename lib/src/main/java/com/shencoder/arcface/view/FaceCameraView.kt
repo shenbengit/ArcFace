@@ -17,6 +17,7 @@ import com.otaliastudios.cameraview.CameraOptions
 import com.otaliastudios.cameraview.controls.Facing
 import com.otaliastudios.cameraview.size.SizeSelectors
 import com.shencoder.arcface.R
+import com.shencoder.arcface.callback.OnCameraListener
 import com.shencoder.arcface.callback.OnPreviewCallback
 import com.shencoder.arcface.configuration.CameraFacing
 import com.shencoder.arcface.configuration.FaceConfiguration
@@ -53,6 +54,7 @@ class FaceCameraView @JvmOverloads constructor(
      */
     @Volatile
     private var enableFace = false
+    private var cameraListener: OnCameraListener? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.camera_preview, this)
@@ -62,24 +64,30 @@ class FaceCameraView @JvmOverloads constructor(
         cameraView.addCameraListener(object : CameraListener() {
 
             override fun onCameraError(exception: CameraException) {
+                cameraListener?.onCameraError(exception)
                 LogUtil.e("${TAG}onCameraError:${exception.message},reason:${exception.reason}")
             }
 
             override fun onCameraOpened(options: CameraOptions) {
+                cameraListener?.onCameraOpened()
+            }
 
+            override fun onCameraClosed() {
+                cameraListener?.onCameraClosed()
             }
 
 
             override fun onOrientationChanged(orientation: Int) {
-                LogUtil.i("${TAG}onOrientationChanged:${orientation}")
+                cameraListener?.onOrientationChanged(orientation)
             }
         })
 
         cameraView.addFrameProcessor {
-            if (enableFace.not()) {
-                return@addFrameProcessor
-            }
             if (it.dataClass == ByteArray::class.java) {
+                cameraListener?.onFrameProcessor(it.getData())
+                if (enableFace.not()) {
+                    return@addFrameProcessor
+                }
                 //Camera Api 预览数据
                 faceHelper.onPreviewFrame(
                     it.getData(),
@@ -95,9 +103,13 @@ class FaceCameraView @JvmOverloads constructor(
         }
     }
 
+    fun setOnCameraListener(listener: OnCameraListener) {
+        cameraListener = listener
+    }
+
     fun enableFace(enableFace: Boolean) {
         if (enableFace) {
-            if (this::faceHelper.isInitialized.not()){
+            if (this::faceHelper.isInitialized.not()) {
                 val result = initFaceHelper()
                 if (result.not()) {
                     return
@@ -165,6 +177,7 @@ class FaceCameraView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun destroy() {
         cameraView.destroy()
+        cameraListener = null
         destroyFace()
     }
 
@@ -217,14 +230,14 @@ class FaceCameraView @JvmOverloads constructor(
                     }
 
                 }
-
+                val msg = recognizeInfo.msg ?: previewInfo.faceId.toString()
                 newList.add(
                     FaceRectView.DrawInfo(
                         previewInfo.rgbTransformedRect,
                         recognizeInfo.gender,
                         recognizeInfo.age,
                         recognizeInfo.liveness,
-                        recognizeInfo.msg,
+                        msg,
                         color
                     )
                 )
