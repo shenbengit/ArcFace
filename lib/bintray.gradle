@@ -5,7 +5,7 @@ publish {
     userOrg = 'shencoder'
     groupId = 'com.shencoder'
     artifactId = 'arc-face'
-    publishVersion = '1.0.1'
+    publishVersion = rootProject.ext.android.versionName
     desc = 'ArcFace For Android'
     website = 'https://github.com/shenbengit/ArcFace'
 }
