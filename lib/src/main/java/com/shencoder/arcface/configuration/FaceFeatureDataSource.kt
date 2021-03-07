@@ -14,7 +14,7 @@ interface FaceFeatureDataSource {
     fun similarThreshold(): Float = 0.8f
 
     /**
-     * 待比较人脸集合
+     * 待比较人脸数据集合，需要自己封装传入
      */
     fun faceFeatureList(): List<FaceFeatureDataBean>
 }

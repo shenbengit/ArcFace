@@ -85,25 +85,23 @@ object FaceActive {
     }
 
     /**
-     * 生成设备指纹信息
+     * 生成设备指纹信息，用于离线激活
      * 子线程运行
      *
      *
      * 请自行获取内存卡读写权限
      *
      * @param context 上下文
+     * @param saveFilePath 保存设备指纹文件的文件地址
+     * @param callback 结果回调
      */
-    fun generateActiveDeviceInfo(
-        context: Context,
-        filePath: String,
-        callback: OnActiveDeviceInfoCallback?
-    ) {
+    fun generateActiveDeviceInfo(context: Context, saveFilePath: String, callback: OnActiveDeviceInfoCallback?) {
         sExecutor.execute {
             val deviceInfo = ActiveDeviceInfo()
             val code = FaceEngine.getActiveDeviceInfo(context, deviceInfo)
             if (code == ErrorInfo.MOK) {
                 val deviceInfoStr = deviceInfo.deviceInfo
-                val file = File(filePath)
+                val file = File(saveFilePath)
                 val parentFile = file.parentFile
                 if (parentFile != null) {
                     if (!parentFile.exists()) {

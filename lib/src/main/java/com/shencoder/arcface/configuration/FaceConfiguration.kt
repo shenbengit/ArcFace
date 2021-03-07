@@ -38,7 +38,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
     val detectFaceScaleVal: Int
 
     /**
-     * 活体检测类型
+     * 活体检测类型，[LivenessType.IR] 目前不支持
      */
     val livenessType: LivenessType
 
@@ -68,7 +68,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
     val detectFaceMaxNum: Int
 
     /**
-     * 识别时是否仅识别最大人脸
+     * 是否仅识别最大人脸
      */
     val recognizeKeepMaxFace: Boolean
 
@@ -196,7 +196,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
             apply { this.detectFaceScaleVal = detectFaceScaleVal }
 
         /**
-         * 活体检测类型
+         * 活体检测类型，[LivenessType.IR] 目前不支持
          */
         internal var livenessType: LivenessType = LivenessType.NONE
         fun setLivenessType(livenessType: LivenessType) =
@@ -261,7 +261,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
             apply { this.detectFaceMaxNum = detectFaceMaxNum }
 
         /**
-         * 识别时是否仅识别最大人脸
+         * 是否仅识别最大人脸
          */
         internal var recognizeKeepMaxFace = true
         fun recognizeKeepMaxFace(recognizeKeepMaxFace: Boolean) =

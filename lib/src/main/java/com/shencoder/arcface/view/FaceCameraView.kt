@@ -107,6 +107,9 @@ class FaceCameraView @JvmOverloads constructor(
         cameraListener = listener
     }
 
+    /**
+     * 是否启用人脸，传入摄像头预览数据
+     */
     fun enableFace(enableFace: Boolean) {
         if (enableFace) {
             if (this::faceHelper.isInitialized.not()) {
@@ -121,9 +124,11 @@ class FaceCameraView @JvmOverloads constructor(
 
     /**
      * 必须要设置配置信息参数
-     * 如果sdk未激活则不初始化[FaceHelper]
+     *
+     * @param configuration 参数配置
+     * @param autoInitFace 是否自动初始化[FaceHelper]，如果sdk未激活则不初始化[FaceHelper]
      */
-    fun setConfiguration(configuration: FaceConfiguration) {
+    fun setConfiguration(configuration: FaceConfiguration, autoInitFace: Boolean = false) {
         cameraView.facing = getCameraFacing(configuration.rgbCameraFcing)
         configuration.previewSize?.let {
             cameraView.setPreviewStreamSize(SizeSelectors.withFilter { size -> it.width == size.width && it.height == size.height })
@@ -137,7 +142,9 @@ class FaceCameraView @JvmOverloads constructor(
 
         mFaceConfiguration = configuration
 
-        initFaceHelper()
+        if (autoInitFace) {
+            enableFace = initFaceHelper()
+        }
     }
 
     fun setLifecycleOwner(owner: LifecycleOwner?) {
@@ -219,7 +226,7 @@ class FaceCameraView @JvmOverloads constructor(
             val newList = mutableListOf<FaceRectView.DrawInfo>()
             for (previewInfo in previewInfoList) {
                 val recognizeInfo = faceHelper.getRecognizeInfo(previewInfo.faceId)
-                var color: Int = mFaceConfiguration.drawFaceRect.colorUnknown
+                var color: Int = mFaceConfiguration.drawFaceRect.unknownColor
                 when {
                     recognizeInfo.recognizeStatus == RecognizeStatus.SUCCEED -> {
                         color = mFaceConfiguration.drawFaceRect.successColor

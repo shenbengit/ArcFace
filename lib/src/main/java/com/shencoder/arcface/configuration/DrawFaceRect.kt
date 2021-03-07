@@ -16,7 +16,7 @@ data class DrawFaceRect(
     /**
      * 未知情况的颜色
      */
-    val colorUnknown: Int = Color.YELLOW,
+    val unknownColor: Int = Color.YELLOW,
     /**
      * 失败的颜色
      */

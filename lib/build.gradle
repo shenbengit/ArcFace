@@ -44,7 +44,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation files('libs/arcsoft_face.jar')
-    implementation files('libs/arcsoft_image_util.jar')
     api 'com.otaliastudios:cameraview:2.7.0'
 }

@@ -14,13 +14,17 @@ import com.shencoder.arcface.face.model.RecognizeInfo
 interface OnRecognizeCallback : FaceFeatureDataSource {
     /**
      * 检测到的人脸数量
+     * <p>运行在子线程</p>
+     *
+     * @param num 人脸数量
+     * @param faceIds faceId
      */
     fun detectFaceNum(num: Int, faceIds: List<Int>) {
 
     }
 
     /**
-     * 有人
+     * 有人，仅在有变化时调用一次
      * <p>运行在子线程</p>
      */
     fun someone() {
@@ -28,7 +32,7 @@ interface OnRecognizeCallback : FaceFeatureDataSource {
     }
 
     /**
-     * 无人
+     * 无人，仅在有变化时调用一次
      * <p>运行在子线程</p>
      */
     fun nobody() {

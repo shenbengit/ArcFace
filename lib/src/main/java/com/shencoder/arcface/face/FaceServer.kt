@@ -16,7 +16,7 @@ import com.shencoder.arcface.util.LogUtil
 import java.util.*
 
 /**
- * 用于人脸搜索、生成特征码
+ * 用于人脸比对、生成特征码
  * 可以自己封装成单例模式
  *
  * @author  ShenBen
@@ -45,8 +45,7 @@ class FaceServer {
     fun init(
         context: Context,
         faceOrient: DetectFaceOrient = DetectFaceOrient.ASF_OP_0_ONLY,
-        @IntRange(from = 2, to = 32)
-        detectFaceScaleVal: Int = 16
+        @IntRange(from = 2, to = 32) detectFaceScaleVal: Int = 16
     ) {
         val orientPriority =
             if (faceOrient == DetectFaceOrient.ASF_OP_ALL_OUT) {
@@ -66,16 +65,14 @@ class FaceServer {
     }
 
     /**
-     * 比对人脸，会返回相似度最大的[features]中的数据
+     * 比对人脸 1:N
+     *
      * @param faceFeature 要比对的人脸特征码
      * @param features 待比对的人脸列表
      *
-     * @return null 说明比对未通过
+     * @return null:说明比对列表为空或者人脸引擎出错；返回相似度最大的[features]中的数据
      */
-    fun compareFaceFeature(
-        faceFeature: FaceFeature,
-        features: List<FaceFeatureDataBean>
-    ): CompareResult? {
+    fun compareFaceFeature(faceFeature: FaceFeature, features: List<FaceFeatureDataBean>): CompareResult? {
         if (features.isEmpty()) {
             return null
         }
@@ -106,7 +103,7 @@ class FaceServer {
     }
 
     /**
-     * 比对两组特征码
+     * 比对两组特征码 1:1
      * @return 返回相似度
      */
     fun compareFaceFeature(feature1: ByteArray, feature2: ByteArray): Float {
@@ -124,7 +121,9 @@ class FaceServer {
 
     /**
      * 通过Bitmap提取特征码
-     * 需要在子线程运行，避免主线程卡死
+     * 最好在子线程运行
+     *
+     * @return 特征码
      */
     fun extractFaceFeature(bitmap: Bitmap?): ByteArray? {
         if (bitmap == null) {
@@ -178,6 +177,9 @@ class FaceServer {
         return feature
     }
 
+    /**
+     * 销毁资源
+     */
     fun destroy() {
         synchronized(faceEngine) {
             val result = faceEngine.unInit()
