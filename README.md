@@ -7,6 +7,7 @@
 最新版本
 ```gradle
 //必选，默认仅支持armeabi-v7a
+//AndroidX
 implementation 'com.shencoder:arc-face:1.0.0'
 //可选，支持arm64-v8a
 implementation 'com.shencoder:arc-face-arm64-v8a:1.0.0'
@@ -227,4 +228,13 @@ fun extractFaceFeature(bitmap: Bitmap?): ByteArray?
   * 销毁资源
   */
 fun destroy()
+```
+>  人脸特征码转换工具 FeatureCovertUtil
+* ByteArray特征码数据转为16进制字符串
+```kotlin
+FeatureCovertUtil.byteArrayToHexString(feature: ByteArray): String
+```
+* 16进制字符串转为ByteArray特征码数据
+```kotlin
+FeatureCovertUtil.hexStringToByteArray(hexStr: String): ByteArray
 ```
