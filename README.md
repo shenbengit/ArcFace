@@ -4,3 +4,10 @@
 ## 引入
 
 ### Gradle:
+最新版本
+```gradle
+//必选
+implementation 'com.shencoder:arc-face:1.0.0'
+//可选
+implementation 'com.shencoder:arc-face-arm64-v8a:1.0.0'
+```
