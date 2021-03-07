@@ -45,6 +45,7 @@ allprojects {
 ```
 
 代码示例
+>  基本使用
 ```kotlin
     val faceCameraView: FaceCameraView = findViewById(R.id.faceCameraView)
     val configuration = FaceConfiguration.Builder(this, object : OnRecognizeCallback {
@@ -126,7 +127,7 @@ allprojects {
                 gender = false,
                 angle = false
             )
-        )//相关属性检测，年龄、性别、3d角度这个功能依附于 [livenessType]，需要为[LivenessType.RGB]
+        )//相关属性检测，年龄、性别、3d角度这个功能依附于 [livenessType]，需要为[LivenessType.RGB]，选择需要启用的，会占用额外的内存，可能影响识别速度
         .setRgbCameraFcing(CameraFacing.BACK)//彩色RGB摄像头类型
         .setIrCameraFcing(CameraFacing.FRONT)//红外IR摄像头类型，目前不支持
         .setPreviewSize(PreviewSize(1280, 720))//摄像头预览分辨率，彩色摄像头和红外都支持的预览分辨率
@@ -157,4 +158,73 @@ allprojects {
     faceCameraView.setLifecycleOwner(this)
     //在合适的地方调用此方法，设置为true且人脸已激活才会提交预览数据
     faceCameraView.enableFace(true)
+```
+>  虹软人脸激活相关 FaceActive
+* 在线激活
+```kotlin
+FaceActive.activeOnline(context: Context, activeKey: String, appId: String, sdkKey: String, callback: OnActiveCallback?)
+```
+* 离线激活
+```kotlin
+FaceActive.activeOffline(context: Context, filePath: String,callback: OnActiveCallback?)
+```
+* 是否已经激活人脸
+```kotlin
+FaceActive.isActivated(context: Context): Boolean
+```
+* 生成设备指纹信息，用于离线激活（请自行获取内存卡读写权限）
+```kotlin
+FaceActive.generateActiveDeviceInfo(context: Context, saveFilePath: String, callback: OnActiveDeviceInfoCallback?)
+```
+>  人脸比对和生成特征码相关 FaceServer (可以自行封装成单例模式)
+* 初始化
+```kotlin
+/**
+  * 初始化人脸引擎
+  * @param context 上下文
+  * @param faceOrient 人脸检测角度，单一角度检测，不支持[DetectFaceOrient.ASF_OP_ALL_OUT]
+  * [DetectFaceOrient.ASF_OP_0_ONLY]
+  * [DetectFaceOrient.ASF_OP_90_ONLY]
+  * [DetectFaceOrient.ASF_OP_180_ONLY]
+  * [DetectFaceOrient.ASF_OP_270_ONLY]
+  * @param detectFaceScaleVal 识别的最小人脸比例，取值范围[2,32]
+  */
+fun init(context: Context, faceOrient: DetectFaceOrient = DetectFaceOrient.ASF_OP_0_ONLY, @IntRange(from = 2, to = 32) detectFaceScaleVal: Int = 16) 
+```
+* 比对人脸 1:N
+```kotlin
+/**
+  * 比对人脸 1:N
+  * @param faceFeature 要比对的人脸特征码
+  * @param features 待比对的人脸列表
+  * 
+  * @return null:说明比对列表为空或者人脸引擎出错；返回相似度最大的[features]中的数据
+  */
+fun compareFaceFeature(faceFeature: FaceFeature, features: List<FaceFeatureDataBean>): CompareResult?
+```
+* 比对人脸 1:1
+```kotlin
+/**
+  * 比对两组特征码 1:1
+  * 
+  * @return 返回相似度
+  */
+fun compareFaceFeature(feature1: ByteArray, feature2: ByteArray): Float
+```
+* 通过Bitmap提取特征码
+```kotlin
+/**
+  * 通过Bitmap提取特征码
+  * 最好在子线程运行
+  * 
+  * @return 特征码
+  */
+fun extractFaceFeature(bitmap: Bitmap?): ByteArray?
+```
+* 销毁资源
+```kotlin
+/**
+  * 销毁资源
+  */
+fun destroy()
 ```
