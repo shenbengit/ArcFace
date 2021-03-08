@@ -1,6 +1,6 @@
 # ArcFace
-基于虹软人脸识别增值版Android SDK V3.1,封装人脸识别方法
-
+基于[虹软人脸识别](https://ai.arcsoft.com.cn/)增值版Android SDK V3.1,封装人脸识别方法。
+> [增值版Android SDK V3.1文档](https://github.com/shenbengit/ArcFace/blob/master/ARCSOFT_ARC_FACE_DEVELOPER'S_GUIDE_V3.1.pdf)
 ## 引入
 [ ![Download](https://api.bintray.com/packages/shencoder/android-lib/arc-face/images/download.svg) ](https://bintray.com/shencoder/android-lib/arc-face/_latestVersion)
 仅支持`AndroidX`
@@ -12,7 +12,6 @@ implementation 'com.shencoder:arc-face:latestVersion'
 //可选，支持arm64-v8a
 implementation 'com.shencoder:arc-face-arm64-v8a:latestVersion'
 ```
-
 ###### 如果Gradle出现implementation失败的情况，可以在Project的build.gradle里面添加如下：
 ```gradle
 allprojects {
@@ -22,6 +21,8 @@ allprojects {
     }
 }
 ```
+
+项目内依赖[CameraView](https://github.com/natario1/CameraView)用于摄像头预览，默认使用[TextureView](https://blog.csdn.net/afei__/article/details/100023701)用于实现预览镜像。
 
 ## 使用事例
 
