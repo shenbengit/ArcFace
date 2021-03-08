@@ -77,6 +77,25 @@ class MainActivity : AppCompatActivity() {
             }
 
             /**
+             * 如果不想自动比对的话，可以通过此接口返回识别到的人脸特征码，仅在[FaceConfiguration.enableCompareFace] 为false时才会回调
+             * <p>运行在子线程</p>
+             *
+             * @param faceId 人脸Id
+             * @param feature 人脸特征码
+             * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
+             */
+            override fun onGetFaceFeature(
+                faceId: Int,
+                feature: ByteArray,
+                recognizeInfo: RecognizeInfo
+            ) {
+                Log.i(
+                    "MainActivity",
+                    "onGetFaceFeature-faceId:${faceId},feature:${feature.size},recognizeInfo:$recognizeInfo"
+                )
+            }
+
+            /**
              * 识别成功后结果回调，仅回调一次，直到人脸离开画面
              * <p>运行在子线程</p>
              *
@@ -90,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 similar: Float,
                 recognizeInfo: RecognizeInfo
             ): String? {
-                println("人脸比对成功-相似度:" + similar + ",recognizeInfo:" + recognizeInfo.toString())
+                Log.i("MainActivity", "onRecognized:$similar,recognizeInfo:$recognizeInfo")
                 return "识别成功"
             }
 
@@ -128,9 +147,9 @@ class MainActivity : AppCompatActivity() {
             .setRecognizeAreaLimitedRatio(0.7f)//识别区域屏占比，正方形，位置在预览画面正中间
             .setDetectInfo(
                 DetectInfo(
-                    age = false,
-                    gender = false,
-                    angle = false
+                    age = true,
+                    gender = true,
+                    angle = true
                 )
             )//相关属性检测，年龄、性别、3d角度这个功能依附于 [livenessType]，需要为[LivenessType.RGB]
             .setRgbCameraFcing(CameraFacing.BACK)//彩色RGB摄像头类型
@@ -149,6 +168,7 @@ class MainActivity : AppCompatActivity() {
             .setRecognizeFailedRetryInterval(1000)//人脸识别失败后，重试间隔，单位：毫秒
             .setLivenessErrorRetryCount(3)//体检测出错重试次数
             .setLivenessFailedRetryInterval(1000)//活体检测失败后，重试间隔，单位：毫秒
+            .enableCompareFace(false)//是否启用人脸比对
             .setOnErrorCallback(object : OnErrorCallback {
                 override fun onError(type: FaceErrorType, errorCode: Int, errorMessage: String) {
                     Log.e(

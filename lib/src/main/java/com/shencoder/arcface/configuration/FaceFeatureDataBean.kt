@@ -17,7 +17,7 @@ data class FaceFeatureDataBean(
      */
     val feature: ByteArray
 ) {
-    val dataClass = data::javaClass
+    val dataClass = data::javaClass.get()
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getData(): T {
@@ -32,6 +32,7 @@ data class FaceFeatureDataBean(
 
         if (data != other.data) return false
         if (!feature.contentEquals(other.feature)) return false
+        if (dataClass != other.dataClass) return false
 
         return true
     }
@@ -39,6 +40,7 @@ data class FaceFeatureDataBean(
     override fun hashCode(): Int {
         var result = data.hashCode()
         result = 31 * result + feature.contentHashCode()
+        result = 31 * result + dataClass.hashCode()
         return result
     }
 

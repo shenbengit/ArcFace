@@ -660,6 +660,12 @@ internal class FaceHelper(
             changeMsg(faceId, "Visitor,$faceId")
             return
         }
+        if (configuration.enableCompareFace.not()) {
+            callback.onGetFaceFeature(faceId, faceFeature.featureData, getRecognizeInfo(faceId))
+            changeRecognizeStatus(faceId, RecognizeStatus.SUCCEED)
+            changeMsg(faceId, "Visitor,$faceId")
+            return
+        }
         val compareResult =
             faceServer.compareFaceFeature(faceFeature, callback.faceFeatureList()) ?: let {
                 changeRecognizeStatus(faceId, RecognizeStatus.FAILED)
@@ -667,10 +673,13 @@ internal class FaceHelper(
                 return
             }
         if (compareResult.similar >= callback.similarThreshold()) {
-            val recognizeInfo = getRecognizeInfo(faceId)
             changeRecognizeStatus(faceId, RecognizeStatus.SUCCEED)
             val msg =
-                callback.onRecognized(compareResult.bean, compareResult.similar, recognizeInfo)
+                callback.onRecognized(
+                    compareResult.bean,
+                    compareResult.similar,
+                    getRecognizeInfo(faceId)
+                )
             changeMsg(faceId, msg)
         } else {
             retryRecognizeDelayed(faceId)

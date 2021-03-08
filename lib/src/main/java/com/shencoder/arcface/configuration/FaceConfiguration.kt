@@ -138,6 +138,11 @@ class FaceConfiguration internal constructor(builder: Builder) {
     val livenessFailedRetryInterval: Long
 
     /**
+     * 是否启用人脸比对
+     */
+    val enableCompareFace: Boolean
+
+    /**
      * 人脸识别时异常回调
      */
     val onErrorCallback: OnErrorCallback?
@@ -167,6 +172,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
         recognizeFailedRetryInterval = builder.recognizeFailedRetryInterval
         livenessErrorRetryCount = builder.livenessErrorRetryCount
         livenessFailedRetryInterval = builder.livenessFailedRetryInterval
+        enableCompareFace = builder.enableCompareFace
         onErrorCallback = builder.onErrorCallback
     }
 
@@ -374,6 +380,15 @@ class FaceConfiguration internal constructor(builder: Builder) {
         fun setLivenessFailedRetryInterval(@IntRange(from = 1) livenessFailedRetryInterval: Long) =
             apply {
                 this.livenessFailedRetryInterval = livenessFailedRetryInterval
+            }
+
+        /**
+         * 是否启用人脸比对
+         */
+        internal var enableCompareFace = true
+        fun enableCompareFace(enableCompareFace: Boolean) =
+            apply {
+                this.enableCompareFace = enableCompareFace
             }
 
         /**

@@ -1,6 +1,7 @@
 package com.shencoder.arcface.util
 
 /**
+ * 人脸特征码转换工具
  *
  * @author  ShenBen
  * @date    2021/03/03 9:18

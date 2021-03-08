@@ -16,5 +16,5 @@ interface FaceFeatureDataSource {
     /**
      * 待比较人脸数据集合，需要自己封装传入
      */
-    fun faceFeatureList(): List<FaceFeatureDataBean>
+    fun faceFeatureList(): List<FaceFeatureDataBean> = emptyList()
 }
