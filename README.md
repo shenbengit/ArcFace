@@ -78,6 +78,22 @@ allprojects {
         }
 
         /**
+         * 如果不想自动比对的话，可以通过此接口返回识别到的人脸特征码，仅在[FaceConfiguration.enableCompareFace] 为false时才会回调
+         * <p>运行在子线程</p>
+         *
+         * @param faceId 人脸Id
+         * @param feature 人脸特征码
+         * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
+         */
+         override fun onGetFaceFeature(
+             faceId: Int,
+             feature: ByteArray,
+             recognizeInfo: RecognizeInfo
+         ) {
+             Log.i("MainActivity", "onGetFaceFeature-faceId:${faceId},feature:${feature.size},recognizeInfo:$recognizeInfo")
+         }
+
+        /**
          * 识别成功后结果回调，仅回调一次，直到人脸离开画面
          * <p>运行在子线程</p>
          *
@@ -145,6 +161,7 @@ allprojects {
         .setRecognizeFailedRetryInterval(1000)//人脸识别失败后，重试间隔，单位：毫秒
         .setLivenessErrorRetryCount(3)//体检测出错重试次数
         .setLivenessFailedRetryInterval(1000)//活体检测失败后，重试间隔，单位：毫秒
+        .enableCompareFace(false)//是否启用人脸比对
         .setOnErrorCallback(object : OnErrorCallback {
             override fun onError(type: FaceErrorType, errorCode: Int, errorMessage: String) {
                 Log.e(
