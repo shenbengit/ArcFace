@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
             .setRecognizeFailedRetryInterval(1000)//人脸识别失败后，重试间隔，单位：毫秒
             .setLivenessErrorRetryCount(3)//体检测出错重试次数
             .setLivenessFailedRetryInterval(1000)//活体检测失败后，重试间隔，单位：毫秒
-            .enableCompareFace(false)//是否启用人脸比对
+            .enableCompareFace(true)//是否启用人脸比对
             .setOnErrorCallback(object : OnErrorCallback {
                 override fun onError(type: FaceErrorType, errorCode: Int, errorMessage: String) {
                     Log.e(
