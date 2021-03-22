@@ -1,6 +1,14 @@
 # ArcFace
 基于[虹软人脸识别](https://ai.arcsoft.com.cn/)增值版Android SDK V3.1,封装人脸识别方法。
 > [增值版Android SDK V3.1文档](https://github.com/shenbengit/ArcFace/blob/master/ARCSOFT_ARC_FACE_DEVELOPER'S_GUIDE_V3.1.pdf)
+## 效果展示
+限制识别区域
+
+![ArcFace](https://github.com/shenbengit/ArcFace/blob/master/screenshots/ArcFace01.gif)
+
+不限制识别区域
+
+![ArcFace](https://github.com/shenbengit/ArcFace/blob/master/screenshots/ArcFace02.gif)
 ## 引入
 [ ![Download](https://api.bintray.com/packages/shencoder/android-lib/arc-face/images/download.svg) ](https://bintray.com/shencoder/android-lib/arc-face/_latestVersion)
 仅支持`AndroidX`
