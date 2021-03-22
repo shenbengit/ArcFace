@@ -72,7 +72,10 @@ class FaceServer {
      *
      * @return null:说明比对列表为空或者人脸引擎出错；返回相似度最大的[features]中的数据
      */
-    fun compareFaceFeature(faceFeature: FaceFeature, features: List<FaceFeatureDataBean>): CompareResult? {
+    fun compareFaceFeature(
+        faceFeature: FaceFeature,
+        features: List<FaceFeatureDataBean>
+    ): CompareResult? {
         if (features.isEmpty()) {
             return null
         }
@@ -168,7 +171,7 @@ class FaceServer {
                         LogUtil.e("${TAG}extractFaceFeature-extractFaceFeature: $extractResult")
                     }
                 } else {
-                    LogUtil.e("${TAG}extractFaceFeature-detectFaces: $detectFaceResult")
+                    LogUtil.e("${TAG}extractFaceFeature-detectFaces: ${detectFaceResult}, faceInfoList.size: ${faceInfoList.size}")
                 }
             }
         } else {

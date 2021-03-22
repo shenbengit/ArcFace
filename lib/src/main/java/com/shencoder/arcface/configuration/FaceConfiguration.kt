@@ -6,6 +6,7 @@ import androidx.annotation.IntRange
 import com.shencoder.arcface.callback.OnErrorCallback
 import com.shencoder.arcface.callback.OnRecognizeCallback
 import com.shencoder.arcface.view.MyTextureCameraPreview
+import com.shencoder.arcface.view.ViewfinderView
 
 /**
  * 人脸识别相关配置
@@ -143,6 +144,16 @@ class FaceConfiguration internal constructor(builder: Builder) {
     val enableCompareFace: Boolean
 
     /**
+     * 扫描框提示文字
+     */
+    val viewfinderText: String?
+
+    /**
+     * 扫描框提示文字位置
+     */
+    val viewfinderTextGravity: ViewfinderView.TextLocation
+
+    /**
      * 人脸识别时异常回调
      */
     val onErrorCallback: OnErrorCallback?
@@ -173,6 +184,8 @@ class FaceConfiguration internal constructor(builder: Builder) {
         livenessErrorRetryCount = builder.livenessErrorRetryCount
         livenessFailedRetryInterval = builder.livenessFailedRetryInterval
         enableCompareFace = builder.enableCompareFace
+        viewfinderText = builder.viewfinderText
+        viewfinderTextGravity = builder.viewfinderTextGravity
         onErrorCallback = builder.onErrorCallback
     }
 
@@ -389,6 +402,24 @@ class FaceConfiguration internal constructor(builder: Builder) {
         fun enableCompareFace(enableCompareFace: Boolean) =
             apply {
                 this.enableCompareFace = enableCompareFace
+            }
+
+        /**
+         * 扫描框提示文字
+         */
+        internal var viewfinderText: String? = null
+        fun setViewfinderText(viewfinderText: String?) =
+            apply {
+                this.viewfinderText = viewfinderText
+            }
+
+        /**
+         * 扫描框提示文字位置
+         */
+        internal var viewfinderTextGravity = ViewfinderView.TextLocation.BOTTOM
+        fun setViewfinderGravity(viewfinderTextGravity: ViewfinderView.TextLocation) =
+            apply {
+                this.viewfinderTextGravity = viewfinderTextGravity
             }
 
         /**

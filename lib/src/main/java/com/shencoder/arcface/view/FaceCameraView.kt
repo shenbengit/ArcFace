@@ -139,7 +139,8 @@ class FaceCameraView @JvmOverloads constructor(
         viewfinderView.visibility =
             if (configuration.enableRecognizeAreaLimited) VISIBLE else INVISIBLE
         viewfinderView.setFrameRatio(configuration.recognizeAreaLimitedRatio)
-
+        viewfinderView.setLabelText(configuration.viewfinderText)
+        viewfinderView.setLabelTextLocation(configuration.viewfinderTextGravity)
         mFaceConfiguration = configuration
 
         if (autoInitFace) {

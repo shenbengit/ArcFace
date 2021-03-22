@@ -22,7 +22,7 @@ import kotlin.math.min
  * @date 2021/02/24 9:18
  * @email 714081644@qq.com
  */
-internal class ViewfinderView @JvmOverloads constructor(
+class ViewfinderView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -268,11 +268,11 @@ internal class ViewfinderView @JvmOverloads constructor(
         )
         labelTextSize = array.getDimension(
             R.styleable.ViewfinderView_labelTextSize,
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14f, resources.displayMetrics)
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16f, resources.displayMetrics)
         )
         labelTextPadding = array.getDimension(
             R.styleable.ViewfinderView_labelTextPadding,
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, resources.displayMetrics)
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, resources.displayMetrics)
         )
         labelTextWidth = array.getDimensionPixelSize(R.styleable.ViewfinderView_labelTextWidth, 0)
         labelTextLocation =
@@ -365,6 +365,10 @@ internal class ViewfinderView @JvmOverloads constructor(
         this.labelText = labelText
     }
 
+    fun setLabelTextLocation(labelTextLocation: TextLocation) {
+        this.labelTextLocation = labelTextLocation
+    }
+
     fun setLabelTextColor(@ColorInt color: Int) {
         labelTextColor = color
     }
@@ -452,7 +456,7 @@ internal class ViewfinderView @JvmOverloads constructor(
      * @param canvas
      * @param frame
      */
-    private fun drawTextInfo(canvas: Canvas, frame: Rect?) {
+    private fun drawTextInfo(canvas: Canvas, frame: Rect) {
         if (!TextUtils.isEmpty(labelText)) {
             textPaint.color = labelTextColor
             textPaint.textSize = labelTextSize
@@ -468,12 +472,12 @@ internal class ViewfinderView @JvmOverloads constructor(
             )
             if (labelTextLocation == TextLocation.BOTTOM) {
                 canvas.translate(
-                    frame!!.left + (frame.width() shr 1).toFloat(),
+                    frame.left + (frame.width() shr 1).toFloat(),
                     frame.bottom + labelTextPadding
                 )
             } else {
                 canvas.translate(
-                    frame!!.left + (frame.width() shr 1).toFloat(),
+                    frame.left + (frame.width() shr 1).toFloat(),
                     frame.top - labelTextPadding - staticLayout.height
                 )
             }

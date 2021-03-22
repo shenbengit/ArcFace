@@ -19,6 +19,7 @@ import com.shencoder.arcface.face.FaceServer
 import com.shencoder.arcface.face.model.RecognizeInfo
 import com.shencoder.arcface.util.FeatureCovertUtil
 import com.shencoder.arcface.view.FaceCameraView
+import com.shencoder.arcface.view.ViewfinderView
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -143,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             .setImageQualityThreshold(0.35f)//图像质量阈值
             .setDetectFaceMaxNum(1)//最大需要检测的人脸个数
             .recognizeKeepMaxFace(true)//是否仅识别最大人脸
-            .enableRecognizeAreaLimited(false)//是否限制识别区域
+            .enableRecognizeAreaLimited(true)//是否限制识别区域
             .setRecognizeAreaLimitedRatio(0.7f)//识别区域屏占比，正方形，位置在预览画面正中间
             .setDetectInfo(
                 DetectInfo(
@@ -169,6 +170,8 @@ class MainActivity : AppCompatActivity() {
             .setLivenessErrorRetryCount(3)//体检测出错重试次数
             .setLivenessFailedRetryInterval(1000)//活体检测失败后，重试间隔，单位：毫秒
             .enableCompareFace(true)//是否启用人脸比对
+            .setViewfinderText("请将人脸置于识别框内")
+            .setViewfinderGravity(ViewfinderView.TextLocation.BOTTOM)
             .setOnErrorCallback(object : OnErrorCallback {
                 override fun onError(type: FaceErrorType, errorCode: Int, errorMessage: String) {
                     Log.e(
