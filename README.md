@@ -15,10 +15,12 @@
 ### Gradle:
 最新版本
 ```gradle
-//必选，默认仅支持armeabi-v7a
+//必选(armeabi-v7a|arm64-v8a)至少添加一个
 implementation 'com.shencoder:arc-face:latestVersion'
+//可选，支持armeabi-v7
+implementation 'com.shencoder:arc-face-armeabi-v7a:1.0.0'
 //可选，支持arm64-v8a
-implementation 'com.shencoder:arc-face-arm64-v8a:latestVersion'
+implementation 'com.shencoder:arc-face-arm64-v8a:1.0.0'
 ```
 ###### 如果Gradle出现implementation失败的情况，可以在Project的build.gradle里面添加如下：
 ```gradle
