@@ -4,7 +4,7 @@ publish {
     repoName = 'android-lib'//远程仓库名字,不指明，默认是上传到maven
     userOrg = 'shencoder'
     groupId = 'com.shencoder'
-    artifactId = 'arc-face-arm64-v8a'
+    artifactId = 'arc-face-armeabi-v7a'
     publishVersion = '1.0.0'
     desc = 'ArcFace For Android'
     website = 'https://github.com/shenbengit/ArcFace'

@@ -44,7 +44,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
     implementation project(path: ':lib')
+    implementation project(path: ':lib-v7a')
     implementation project(path: ':lib-v8a')
-//    implementation 'com.shencoder:arc-face:1.0.0'
+//    implementation 'com.shencoder:arc-face:1.1.1'
 //    implementation 'com.shencoder:arc-face-arm64-v8a:1.0.0'
+//    implementation 'com.shencoder:arc-face-armeabi-v7a:1.0.0'
 }

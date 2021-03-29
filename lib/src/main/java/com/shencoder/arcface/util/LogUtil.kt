@@ -13,10 +13,12 @@ object LogUtil {
 
     private var logPriority = Log.VERBOSE
 
+    @JvmStatic
     fun setLogPriority(priority: Int) {
         logPriority = priority
     }
 
+    @JvmStatic
     fun v(msg: String) {
         if (isLoggable(Log.VERBOSE).not()) {
             return
@@ -24,6 +26,7 @@ object LogUtil {
         Log.v(TAG, msg)
     }
 
+    @JvmStatic
     fun d(msg: String) {
         if (isLoggable(Log.DEBUG).not()) {
             return
@@ -31,6 +34,7 @@ object LogUtil {
         Log.d(TAG, msg)
     }
 
+    @JvmStatic
     fun i(msg: String) {
         if (isLoggable(Log.INFO).not()) {
             return
@@ -38,6 +42,7 @@ object LogUtil {
         Log.i(TAG, msg)
     }
 
+    @JvmStatic
     fun w(msg: String) {
         if (isLoggable(Log.WARN).not()) {
             return
@@ -45,6 +50,7 @@ object LogUtil {
         Log.w(TAG, msg)
     }
 
+    @JvmStatic
     fun e(msg: String) {
         if (isLoggable(Log.ERROR).not()) {
             return

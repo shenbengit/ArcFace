@@ -17,6 +17,7 @@ object FeatureCovertUtil {
     /**
      * ByteArray特征码数据转为16进制字符串
      */
+    @JvmStatic
     fun byteArrayToHexString(feature: ByteArray): String {
         if (feature.size != FEATURE_BYTE_ARRAY_LENGTH) {
             return AppUtil.encodeHexString(ByteArray(FEATURE_BYTE_ARRAY_LENGTH), false)
@@ -27,6 +28,7 @@ object FeatureCovertUtil {
     /**
      * 16进制字符串转为ByteArray特征码数据
      */
+    @JvmStatic
     fun hexStringToByteArray(hexStr: String): ByteArray {
         if (hexStr.length != FEATURE_HEX_STRING_LENGTH) {
             return ByteArray(FEATURE_BYTE_ARRAY_LENGTH)
@@ -37,5 +39,6 @@ object FeatureCovertUtil {
     /**
      * 判断两个特征码是否相等
      */
+    @JvmStatic
     fun isSameFeature(feature1: ByteArray, feature2: ByteArray) = feature1.contentEquals(feature2)
 }

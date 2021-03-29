@@ -21,6 +21,7 @@ object FaceRectTransformerUtil {
      *
      * @return 调整后的需要被绘制到View上的rect
      */
+    @JvmStatic
     fun adjustRect(
         previewWidth: Int,
         previewHeight: Int,
@@ -114,6 +115,7 @@ object FaceRectTransformerUtil {
      * @param offsetY 偏移量Y
      * @return IR人脸框
      */
+    @JvmStatic
     fun rgbRectToIrRect(rgbRect: Rect, zoomRatio: Float, offsetX: Int = 0, offsetY: Int = 0): Rect {
         val rect = Rect(
             (rgbRect.left * zoomRatio).toInt(),
