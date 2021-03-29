@@ -19,8 +19,7 @@ enum class LivenessType {
     RGB,
 
     /**
-     * 红外活体检测
-     * [注意：目前不用]
+     * IR活体检测，红外活体检测
      */
     IR
 }

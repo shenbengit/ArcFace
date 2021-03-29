@@ -11,17 +11,17 @@ import com.shencoder.arcface.view.FaceRectView
  * @date    2021/02/26 10:14
  * @email   714081644@qq.com
  */
- class FacePreviewInfo constructor(
+class FacePreviewInfo constructor(
     val faceId: Int,
     /**
      * RGB人脸信息，包括人脸框和人脸角度
      */
-    val faceInfoRgb: FaceInfo
-) {
+    val faceInfoRgb: FaceInfo,
     /**
      * IR人脸信息，包括人脸框和人脸角度
      */
-    val faceInfoIr: FaceInfo? = null
+    val faceInfoIr: FaceInfo
+) {
 
     /**
      * 可见光成像对应的用于[FaceRectView]绘制的Rect
@@ -29,7 +29,7 @@ import com.shencoder.arcface.view.FaceRectView
     var rgbTransformedRect: Rect = Rect()
 
     /**
-     *红外成像对应的用于[FaceRectView]绘制的Rect
+     * 红外成像对应的用于[FaceRectView]绘制的Rect
      */
     var irTransformedRect: Rect = Rect()
 

@@ -82,12 +82,14 @@ internal class FaceRectView @JvmOverloads constructor(
         path.lineTo(rect.left.toFloat(), rect.bottom - (rect.height() shr 2).toFloat())
         canvas.drawPath(path, paint)
 
-        // 绘制文字，用最细的即可，避免在某些低像素设备上文字模糊
-        paint.strokeWidth = 1f
-        paint.style = Paint.Style.FILL_AND_STROKE
-        paint.textSize = (rect.width() shr 3.toFloat().toInt()).toFloat()
+        drawInfo.name?.let {
+            // 绘制文字，用最细的即可，避免在某些低像素设备上文字模糊
+            paint.strokeWidth = 1f
+            paint.style = Paint.Style.FILL_AND_STROKE
+            paint.textSize = (rect.width() shr 3.toFloat().toInt()).toFloat()
 
-        canvas.drawText(drawInfo.name ?: "UNKNOWN", rect.left.toFloat(), rect.top - 10.toFloat(), paint)
+            canvas.drawText(it, rect.left.toFloat(), rect.top - 10.toFloat(), paint)
+        }
     }
 
     internal data class DrawInfo(

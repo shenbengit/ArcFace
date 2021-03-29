@@ -1,7 +1,6 @@
 package com.shencoder.arcface.util
 
 import android.graphics.Rect
-import com.otaliastudios.cameraview.size.AspectRatio
 
 /**
  * 将检测回传的人脸框（基于NV21数据）转换为View绘制（基于View）所需的人脸框
@@ -28,7 +27,9 @@ object FaceRectTransformerUtil {
         canvasWidth: Int,
         canvasHeight: Int,
         isMirror: Boolean,
-        detectRect: Rect
+        detectRect: Rect,
+        offsetX: Int = 0,
+        offsetY: Int = 0
     ): Rect {
         //当前宽高比
         val current = AspectRatio.of(canvasWidth, canvasHeight)
@@ -75,7 +76,7 @@ object FaceRectTransformerUtil {
             }
             rect.bottom = bottom - offset
         } else {//当前宽高比小于目标宽高比
-           val scaleX = target.toFloat() / current.toFloat()
+            val scaleX = target.toFloat() / current.toFloat()
             //缩放后的宽度
             val ratioWidth = (canvasWidth * scaleX).toInt()
             //偏移量
@@ -101,6 +102,26 @@ object FaceRectTransformerUtil {
             }
             rect.bottom = bottom
         }
+        rect.offset(offsetX,offsetY)
+        return rect
+    }
+
+    /**
+     * RGB人脸框转换成IR人脸框
+     * @param rgbRect RGB人脸框
+     * @param zoomRatio 缩放比
+     * @param offsetX 偏移量X
+     * @param offsetY 偏移量Y
+     * @return IR人脸框
+     */
+    fun rgbRectToIrRect(rgbRect: Rect, zoomRatio: Float, offsetX: Int = 0, offsetY: Int = 0): Rect {
+        val rect = Rect(
+            (rgbRect.left * zoomRatio).toInt(),
+            (rgbRect.top * zoomRatio).toInt(),
+            (rgbRect.right * zoomRatio).toInt(),
+            (rgbRect.bottom * zoomRatio).toInt()
+        )
+        rect.offset(offsetX,offsetY)
         return rect
     }
 }

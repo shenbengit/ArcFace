@@ -24,5 +24,21 @@ data class DrawFaceRect(
     /**
      * 成功的颜色
      */
-    val successColor: Int = Color.GREEN
+    val successColor: Int = Color.GREEN,
+    /**
+     * RGB人脸框X偏移量
+     */
+    val rgbOffsetX: Int = 0,
+    /**
+     * RGB人脸框Y偏移量
+     */
+    val rgbOffsetY: Int = 0,
+    /**
+     * IR人脸框X偏移量
+     */
+    val irOffsetX: Int = 0,
+    /**
+     * IR人脸框Y偏移量
+     */
+    val irOffsetY: Int = 0,
 )

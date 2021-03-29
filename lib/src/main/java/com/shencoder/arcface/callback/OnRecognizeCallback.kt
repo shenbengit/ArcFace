@@ -13,33 +13,7 @@ import com.shencoder.arcface.configuration.FaceConfiguration
  * @date 2020/12/17 9:17
  * @email 714081644@qq.com
  */
-interface OnRecognizeCallback : FaceFeatureDataSource {
-    /**
-     * 检测到的人脸数量
-     * <p>运行在子线程</p>
-     *
-     * @param num 人脸数量
-     * @param faceIds faceId
-     */
-    fun detectFaceNum(num: Int, faceIds: List<Int>) {
-
-    }
-
-    /**
-     * 有人，仅在有变化时调用一次
-     * <p>运行在子线程</p>
-     */
-    fun someone() {
-
-    }
-
-    /**
-     * 无人，仅在有变化时调用一次
-     * <p>运行在子线程</p>
-     */
-    fun nobody() {
-
-    }
+interface OnRecognizeCallback : FaceFeatureDataSource, FaceDetectCallback {
 
     /**
      * 如果不想自动比对的话，可以通过此接口返回识别到的人脸特征码，仅在[FaceConfiguration.enableCompareFace] 为false时才会回调
@@ -48,8 +22,14 @@ interface OnRecognizeCallback : FaceFeatureDataSource {
      * @param faceId 人脸Id
      * @param feature 人脸特征码
      * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
+     * @param nv21 camera预览数据
      */
-    fun onGetFaceFeature(faceId: Int, feature: ByteArray, recognizeInfo: RecognizeInfo) {
+    fun onGetFaceFeature(
+        faceId: Int,
+        feature: ByteArray,
+        recognizeInfo: RecognizeInfo,
+        nv21: ByteArray
+    ) {
 
     }
 

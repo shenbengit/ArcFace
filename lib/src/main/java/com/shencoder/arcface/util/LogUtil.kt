@@ -10,34 +10,49 @@ import android.util.Log
  */
 object LogUtil {
     private const val TAG = "ArcFace"
-    var DEBUG = true
+
+    private var logPriority = Log.VERBOSE
+
+    fun setLogPriority(priority: Int) {
+        logPriority = priority
+    }
+
     fun v(msg: String) {
-        if (DEBUG) {
-            Log.v(TAG, msg)
+        if (isLoggable(Log.VERBOSE).not()) {
+            return
         }
+        Log.v(TAG, msg)
     }
 
     fun d(msg: String) {
-        if (DEBUG) {
-            Log.d(TAG, msg)
+        if (isLoggable(Log.DEBUG).not()) {
+            return
         }
+        Log.d(TAG, msg)
     }
 
     fun i(msg: String) {
-        if (DEBUG) {
-            Log.i(TAG, msg)
+        if (isLoggable(Log.INFO).not()) {
+            return
         }
+        Log.i(TAG, msg)
     }
 
     fun w(msg: String) {
-        if (DEBUG) {
-            Log.w(TAG, msg)
+        if (isLoggable(Log.WARN).not()) {
+            return
         }
+        Log.w(TAG, msg)
     }
 
     fun e(msg: String) {
-        if (DEBUG) {
-            Log.e(TAG, msg)
+        if (isLoggable(Log.ERROR).not()) {
+            return
         }
+        Log.e(TAG, msg)
+    }
+
+    private fun isLoggable(priority: Int): Boolean {
+        return priority >= logPriority
     }
 }

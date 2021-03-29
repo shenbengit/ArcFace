@@ -1,6 +1,7 @@
 package com.shencoder.arcface.configuration
 
 /**
+ * 人脸比对转换bean
  *
  * @author  ShenBen
  * @date    2021/03/02 9:35

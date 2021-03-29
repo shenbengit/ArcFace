@@ -44,6 +44,7 @@ object FaceActive {
      * @param sdkKey    sdkKey
      * @return
      */
+    @JvmStatic
     fun activeOnline(
         context: Context,
         activeKey: String,
@@ -66,7 +67,8 @@ object FaceActive {
      * @param filePath 离线激活文件地址
      * @return
      */
-    fun activeOffline(context: Context, filePath: String,callback: OnActiveCallback?) {
+    @JvmStatic
+    fun activeOffline(context: Context, filePath: String, callback: OnActiveCallback?) {
         sExecutor.execute {
             val code = FaceEngine.activeOffline(context, filePath)
             val isSuccess = code == ErrorInfo.MOK || code == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED
@@ -80,6 +82,7 @@ object FaceActive {
      * @param context 上下文
      * @return 是否已经激活人脸
      */
+    @JvmStatic
     fun isActivated(context: Context): Boolean {
         return FaceEngine.getActiveFileInfo(context, ActiveFileInfo()) == ErrorInfo.MOK
     }
@@ -95,7 +98,12 @@ object FaceActive {
      * @param saveFilePath 保存设备指纹文件的文件地址
      * @param callback 结果回调
      */
-    fun generateActiveDeviceInfo(context: Context, saveFilePath: String, callback: OnActiveDeviceInfoCallback?) {
+    @JvmStatic
+    fun generateActiveDeviceInfo(
+        context: Context,
+        saveFilePath: String,
+        callback: OnActiveDeviceInfoCallback?
+    ) {
         sExecutor.execute {
             val deviceInfo = ActiveDeviceInfo()
             val code = FaceEngine.getActiveDeviceInfo(context, deviceInfo)

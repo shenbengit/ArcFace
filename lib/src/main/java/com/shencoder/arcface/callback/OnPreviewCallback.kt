@@ -9,7 +9,7 @@ import com.shencoder.arcface.face.model.FacePreviewInfo
  * @date    2021/03/01 14:14
  * @email   714081644@qq.com
  */
-internal interface OnPreviewCallback {
+internal interface OnPreviewCallback : FaceDetectCallback {
     /**
      * 获取识别限制区域
      */

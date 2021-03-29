@@ -5,8 +5,8 @@ import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import com.shencoder.arcface.callback.OnErrorCallback
 import com.shencoder.arcface.callback.OnRecognizeCallback
-import com.shencoder.arcface.view.MyTextureCameraPreview
 import com.shencoder.arcface.view.ViewfinderView
+import io.fotoapparat.configuration.CameraConfiguration
 
 /**
  * 人脸识别相关配置
@@ -16,19 +16,34 @@ import com.shencoder.arcface.view.ViewfinderView
  * @email   714081644@qq.com
  */
 class FaceConfiguration internal constructor(builder: Builder) {
-    val context: Context
 
-    val recognizeCallback: OnRecognizeCallback?
+    companion object {
+
+        @JvmStatic
+        fun builder(context: Context, recognizeCallback: OnRecognizeCallback?): Builder =
+            Builder(context, recognizeCallback)
+
+        /**
+         * 默认配置
+         */
+        @JvmStatic
+        fun default(context: Context, recognizeCallback: OnRecognizeCallback?): FaceConfiguration =
+            builder(context, recognizeCallback).build()
+    }
+
+    val context: Context = builder.context
+
+    val recognizeCallback: OnRecognizeCallback? = builder.recognizeCallback
 
     /**
      * 是否需要识别
      */
-    val enableRecognize: Boolean
+    val enableRecognize: Boolean = builder.enableRecognize
 
     /**
      * 人脸检测角度
      */
-    val detectFaceOrient: DetectFaceOrient
+    val detectFaceOrient: DetectFaceOrient = builder.detectFaceOrient
 
     /**
      * 用于数值化表示的最小人脸尺寸，该尺寸代表人脸尺寸相对于图片长边的占比。
@@ -36,160 +51,137 @@ class FaceConfiguration internal constructor(builder: Builder) {
      * IMAGE 模式有效值范围[2,32]，推荐值为 30；
      * 特殊情况下可根据具体场景进行设置。
      */
-    val detectFaceScaleVal: Int
+    val detectFaceScaleVal: Int = builder.detectFaceScaleVal
 
     /**
-     * 活体检测类型，[LivenessType.IR] 目前不支持
+     * 活体检测类型
      */
-    val livenessType: LivenessType
+    val livenessType: LivenessType = builder.livenessType
 
     /**
      * 设置RGB可见光活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.6f
      */
-    val rgbLivenessThreshold: Float
+    val rgbLivenessThreshold: Float = builder.rgbLivenessThreshold
 
     /**
      * 设置IR红外活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.7f
      */
-    val irLivenessThreshold: Float
+    val irLivenessThreshold: Float = builder.irLivenessThreshold
 
     /**
      * 是否启用图像质量阈值
      */
-    val enableImageQuality: Boolean
+    val enableImageQuality: Boolean = builder.enableImageQuality
 
     /**
      * 图像质量阈值，有效值范围(0.0f,1.0f)
      */
-    val imageQualityThreshold: Float
+    val imageQualityThreshold: Float = builder.imageQualityThreshold
 
     /**
      * 最大需要检测的人脸个数，取值范围[1,50]
      */
-    val detectFaceMaxNum: Int
+    val detectFaceMaxNum: Int = builder.detectFaceMaxNum
 
     /**
      * 是否仅识别最大人脸
      */
-    val recognizeKeepMaxFace: Boolean
+    val recognizeKeepMaxFace: Boolean = builder.recognizeKeepMaxFace
 
     /**
      * 是否限制识别区域
      */
-    val enableRecognizeAreaLimited: Boolean
+    val enableRecognizeAreaLimited: Boolean = builder.enableRecognizeAreaLimited
 
     /**
      * 识别区域屏占比，默认在摄像预览画面中间，有效值范围(0.0f,1.0f)
      */
-    val recognizeAreaLimitedRatio: Float
+    val recognizeAreaLimitedRatio: Float = builder.recognizeAreaLimitedRatio
 
     /**
      * 相关属性检测，年龄、性别、3d角度
      */
-    val detectInfo: DetectInfo
+    val detectInfo: DetectInfo = builder.detectInfo
 
     /**
      * 彩色RGB摄像头类型
      */
-    val rgbCameraFcing: CameraFacing
+    val rgbCameraFcing: CameraFacing = builder.rgbCameraFcing
 
     /**
      * 红外IR摄像头类型
      */
-    val irCameraFcing: CameraFacing
+    val irCameraFcing: CameraFacing = builder.irCameraFcing
 
     /**
      * 摄像头预览分辨率，为null时自动计算
      * 预览分辨率是[rgbCameraFcing] [irCameraFcing] 都支持的预览分辨率
      */
-    val previewSize: PreviewSize?
+    val previewSize: PreviewSize? = builder.previewSize
 
     /**
      * 人脸识别框绘制相关
      */
-    val drawFaceRect: DrawFaceRect
+    val drawFaceRect: DrawFaceRect = builder.drawFaceRect
 
     /**
-     * 是否镜像预览
+     * RGB是否镜像预览
      */
-    val isMirror: Boolean
+    val isRgbMirror: Boolean = builder.isRgbMirror
+
+    /**
+     * IR是否镜像预览
+     */
+    val isIrMirror: Boolean = builder.isIrMirror
 
     /**
      * 人脸特征提取出错重试次数
      */
     @IntRange(from = 1)
-    val extractFeatureErrorRetryCount: Int
+    val extractFeatureErrorRetryCount: Int = builder.extractFeatureErrorRetryCount
 
     /**
      * 人脸识别失败后，重试间隔，单位：毫秒
      */
     @IntRange(from = 1)
-    val recognizeFailedRetryInterval: Long
+    val recognizeFailedRetryInterval: Long = builder.recognizeFailedRetryInterval
 
     /**
      * 体检测出错重试次数
      */
     @IntRange(from = 1)
-    val livenessErrorRetryCount: Int
+    val livenessErrorRetryCount: Int = builder.livenessErrorRetryCount
 
     /**
      * 活体检测失败后，重试间隔，单位：毫秒
      */
     @IntRange(from = 1)
-    val livenessFailedRetryInterval: Long
+    val livenessFailedRetryInterval: Long = builder.livenessFailedRetryInterval
 
     /**
      * 是否启用人脸比对
      */
-    val enableCompareFace: Boolean
+    val enableCompareFace: Boolean = builder.enableCompareFace
 
     /**
      * 扫描框提示文字
      */
-    val viewfinderText: String?
+    val viewfinderText: String? = builder.viewfinderText
 
     /**
      * 扫描框提示文字位置
      */
-    val viewfinderTextGravity: ViewfinderView.TextLocation
+    val viewfinderTextGravity: ViewfinderView.TextLocation = builder.viewfinderTextGravity
 
     /**
      * 人脸识别时异常回调
      */
-    val onErrorCallback: OnErrorCallback?
+    val onErrorCallback: OnErrorCallback? = builder.onErrorCallback
 
-    init {
-        context = builder.context
-        recognizeCallback = builder.recognizeCallback
-        enableRecognize = builder.enableRecognize
-        detectFaceOrient = builder.detectFaceOrient
-        detectFaceScaleVal = builder.detectFaceScaleVal
-        livenessType = builder.livenessType
-        rgbLivenessThreshold = builder.rgbLivenessThreshold
-        irLivenessThreshold = builder.irLivenessThreshold
-        enableImageQuality = builder.enableImageQuality
-        imageQualityThreshold = builder.imageQualityThreshold
-        detectFaceMaxNum = builder.detectFaceMaxNum
-        recognizeKeepMaxFace = builder.recognizeKeepMaxFace
-        enableRecognizeAreaLimited = builder.enableRecognizeAreaLimited
-        recognizeAreaLimitedRatio = builder.recognizeAreaLimitedRatio
-        detectInfo = builder.detectInfo
-        rgbCameraFcing = builder.rgbCameraFcing
-        irCameraFcing = builder.irCameraFcing
-        previewSize = builder.previewSize
-        drawFaceRect = builder.drawFaceRect
-        isMirror = builder.isMirror
-        extractFeatureErrorRetryCount = builder.extractFeatureErrorRetryCount
-        recognizeFailedRetryInterval = builder.recognizeFailedRetryInterval
-        livenessErrorRetryCount = builder.livenessErrorRetryCount
-        livenessFailedRetryInterval = builder.livenessFailedRetryInterval
-        enableCompareFace = builder.enableCompareFace
-        viewfinderText = builder.viewfinderText
-        viewfinderTextGravity = builder.viewfinderTextGravity
-        onErrorCallback = builder.onErrorCallback
-    }
-
-    class Builder(internal val context: Context, val recognizeCallback: OnRecognizeCallback?) {
+    class Builder internal constructor(
+        internal val context: Context,
+        val recognizeCallback: OnRecognizeCallback?
+    ) {
         /**
          * 人脸检测角度
          */
@@ -215,7 +207,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
             apply { this.detectFaceScaleVal = detectFaceScaleVal }
 
         /**
-         * 活体检测类型，[LivenessType.IR] 目前不支持
+         * 活体检测类型
          */
         internal var livenessType: LivenessType = LivenessType.NONE
         fun setLivenessType(livenessType: LivenessType) =
@@ -333,7 +325,9 @@ class FaceConfiguration internal constructor(builder: Builder) {
             apply { this.irCameraFcing = irCameraFcing }
 
         /**
-         * 摄像头预览分辨率，为null时自动计算
+         * 摄像头预览分辨率，为null时自动计算，
+         * 可能[rgbCameraFcing] [irCameraFcing] 预览的分辨率不一致，导致IR活体检测异常
+         * <p>最好手动设置</p>
          * 预览分辨率是[rgbCameraFcing] [irCameraFcing] 都支持的预览分辨率
          */
         internal var previewSize: PreviewSize? = null
@@ -348,12 +342,19 @@ class FaceConfiguration internal constructor(builder: Builder) {
         }
 
         /**
-         * 是否镜像预览
-         * 仅支持[MyTextureCameraPreview]
+         * RGB是否镜像预览
          */
-        internal var isMirror = false
-        fun isMirror(isMirror: Boolean) = apply {
-            this.isMirror = isMirror
+        internal var isRgbMirror = false
+        fun isRgbMirror(isRgbMirror: Boolean) = apply {
+            this.isRgbMirror = isRgbMirror
+        }
+
+        /**
+         * IR是否镜像预览
+         */
+        internal var isIrMirror = false
+        fun isIrMirror(isIrMirror: Boolean) = apply {
+            this.isIrMirror = isIrMirror
         }
 
         /**

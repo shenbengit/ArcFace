@@ -290,18 +290,27 @@ internal class FaceHelper(
             }
             //转换人脸信息
             for (faceInfo in faceInfoList) {
-                val adjustRect = FaceRectTransformerUtil.adjustRect(
+                val rgbAdjustRect = FaceRectTransformerUtil.adjustRect(
                     previewWidth,
                     previewHeight,
                     canvasWidth,
                     canvasHeight,
-                    configuration.isMirror,
-                    faceInfo.rect
+                    configuration.isRgbMirror,
+                    faceInfo.rect,
+                    configuration.drawFaceRect.rgbOffsetX,
+                    configuration.drawFaceRect.rgbOffsetY
                 )
-                val previewInfo = FacePreviewInfo(faceInfo.faceId, faceInfo)
-                previewInfo.rgbTransformedRect = adjustRect
+                val previewInfo =
+                    FacePreviewInfo(faceInfo.faceId, faceInfo, FaceInfo(faceInfo))
+                previewInfo.rgbTransformedRect = rgbAdjustRect
+                previewInfo.irTransformedRect = FaceRectTransformerUtil.rgbRectToIrRect(
+                    rgbAdjustRect,
+                    FaceConstant.DEFAULT_ZOOM_RATIO,
+                    configuration.drawFaceRect.irOffsetX,
+                    configuration.drawFaceRect.irOffsetY
+                )
                 previewInfo.recognizeAreaValid =
-                    onPreviewCallback.getRecognizeAreaRect().contains(adjustRect)
+                    onPreviewCallback.getRecognizeAreaRect().contains(rgbAdjustRect)
                 facePreviewInfo.add(previewInfo)
             }
             if (configuration.enableRecognize && faceInfoList.isNotEmpty()) {
@@ -402,17 +411,17 @@ internal class FaceHelper(
         val anybody = faceInfoList.isNotEmpty()
         if (isAnybody != anybody) {
             if (anybody) {
-                configuration.recognizeCallback?.someone()
+                onPreviewCallback.someone()
             } else {
-                configuration.recognizeCallback?.nobody()
+                onPreviewCallback.nobody()
             }
             isAnybody = anybody
         }
         val num = faceInfoList.size
         if (detectFaceNum != num) {
-            val faceIds = mutableListOf<Int>()
+            val faceIds: ArrayList<Int> = ArrayList(faceInfoList.size)
             faceInfoList.forEach { faceIds.add(it.faceId) }
-            configuration.recognizeCallback?.detectFaceNum(num, faceIds)
+            onPreviewCallback.detectFaceNum(num, faceIds)
             detectFaceNum = num
         }
     }
@@ -451,10 +460,12 @@ internal class FaceHelper(
             }
             if (contained.not()) {
                 val value = next.value
+                //先删除
+                iterator.remove()
+                //再通知
                 synchronized(value.lock) {
                     value.lock.notifyAll()
                 }
-                iterator.remove()
             }
         }
     }
@@ -528,6 +539,7 @@ internal class FaceHelper(
     ) {
         if (detectInfoThreadQueue.remainingCapacity() <= 0) {
             LogUtil.w("requestFaceDetectInfo 线程池满了")
+            changeMsg(info.faceId, "DetectInfoThread is full.")
             return
         }
         detectInfoExecutor.execute(
@@ -537,7 +549,8 @@ internal class FaceHelper(
                 width,
                 height,
                 info.faceId,
-                info.faceInfoRgb
+                info.faceInfoRgb,
+                info.faceInfoIr
             )
         )
     }
@@ -550,6 +563,7 @@ internal class FaceHelper(
     ) {
         if (extractFeatureThreadQueue.remainingCapacity() <= 0) {
             LogUtil.w("requestFaceFeature 线程池满了")
+            changeMsg(info.faceId, "FeatureThread is full.")
             return
         }
         extractFeatureExecutor.execute(
@@ -587,15 +601,25 @@ internal class FaceHelper(
                     retryLivenessDetectDelayed(faceId)
                 }
                 else -> {
-                    LogUtil.w("${TAG}onFaceLivenessInfoGet-liveness:${livenessInfo.liveness},faceId:$faceId")
+                    changeMsg(faceId, "LIVENESS FAILED:${livenessInfo.liveness}")
+                    //继续活体检测
+                    LogUtil.w(
+                        "${TAG}onFaceLivenessInfoGet-liveness:${livenessInfo.liveness},faceId:$faceId,${
+                            FaceConstant.getLivenessErrorMsg(
+                                livenessInfo.liveness
+                            )
+                        }"
+                    )
                 }
             }
         } else {
-            if (recognizeInfo.increaseAndGetLivenessErrorRetryCount() > configuration.livenessErrorRetryCount) {
+            changeMsg(faceId, "ProcessFailed:${errorCode},faceId:${faceId}")
+            if (errorCode != ErrorInfo.MERR_FSDK_FACEFEATURE_LOW_CONFIDENCE_LEVEL
+                && recognizeInfo.increaseAndGetLivenessErrorRetryCount() > configuration.livenessErrorRetryCount
+            ) {
+                //错误码不为检测置信度低或者在尝试最大次数后，活体检测仍然失败，则认为失败
                 recognizeInfo.resetLivenessErrorRetryCount()
-                //在尝试最大次数后，活体检测仍然失败，则认为失败
                 changeLiveness(faceId, RequestLivenessStatus.FAILED)
-                changeMsg(faceId, "ProcessFailed:${errorCode},faceId:${faceId}")
                 synchronized(recognizeInfo.lock) {
                     recognizeInfo.lock.notifyAll()
                 }
@@ -611,7 +635,12 @@ internal class FaceHelper(
      * @param faceFeature 人脸特征码
      * @param faceId faceId
      */
-    private fun onFaceFeatureInfoGet(faceFeature: FaceFeature?, faceId: Int, errorCode: Int) {
+    private fun onFaceFeatureInfoGet(
+        faceFeature: FaceFeature?,
+        faceId: Int,
+        errorCode: Int,
+        nv21: ByteArray
+    ) {
         if (recognizeInfoMap.containsKey(faceId).not()) {
             //人脸已离开，不用处理
             LogUtil.w("${TAG}onFaceFeatureInfoGet-faceId:${faceId}已离开")
@@ -620,18 +649,20 @@ internal class FaceHelper(
         val recognizeInfo = getRecognizeInfo(faceId)
         when {
             faceFeature == null -> {
-                if (recognizeInfo.increaseAndGetExtractFeatureErrorRetryCount() > configuration.extractFeatureErrorRetryCount) {
+                changeMsg(faceId, "ExtractFailed:${errorCode},faceId:${faceId}")
+                if (errorCode != ErrorInfo.MERR_FSDK_FACEFEATURE_LOW_CONFIDENCE_LEVEL
+                    && recognizeInfo.increaseAndGetExtractFeatureErrorRetryCount() > configuration.extractFeatureErrorRetryCount
+                ) {
+                    //错误码不为检测置信度低或者在尝试最大次数后，特征提取仍然失败，则认为识别未通过
                     recognizeInfo.resetExtractFeatureErrorRetryCount()
-                    //在尝试最大次数后，特征提取仍然失败，则认为识别未通过
                     changeRecognizeStatus(faceId, RecognizeStatus.FAILED)
-                    changeMsg(faceId, "ExtractFailed:${errorCode},faceId:${faceId}")
 //                    retryRecognizeDelayed(faceId)
                 } else {
                     changeRecognizeStatus(faceId, RecognizeStatus.TO_RETRY)
                 }
             }
             configuration.livenessType == LivenessType.NONE || recognizeInfo.liveness == LivenessInfo.ALIVE -> {
-                searchFace(faceFeature, faceId)
+                searchFace(faceFeature, faceId, nv21)
             }
             recognizeInfo.liveness == RequestLivenessStatus.FAILED -> {
                 //活体检测失败
@@ -642,7 +673,7 @@ internal class FaceHelper(
                     try {
                         recognizeInfo.lock.wait()
                         //避免比对中途，人脸离开了
-                        onFaceFeatureInfoGet(faceFeature, faceId, errorCode)
+                        onFaceFeatureInfoGet(faceFeature, faceId, errorCode, nv21)
                     } catch (e: InterruptedException) {
                         LogUtil.w("${TAG}onFaceFeatureInfoGet: 等待活体结果时退出界面会执行，正常现象，可注释异常代码块")
                     }
@@ -654,14 +685,19 @@ internal class FaceHelper(
     /**
      * 搜索人脸
      */
-    private fun searchFace(faceFeature: FaceFeature, faceId: Int) {
+    private fun searchFace(faceFeature: FaceFeature, faceId: Int, nv21: ByteArray) {
         val callback = configuration.recognizeCallback ?: let {
             changeRecognizeStatus(faceId, RecognizeStatus.FAILED)
             changeMsg(faceId, "Visitor,$faceId")
             return
         }
         if (configuration.enableCompareFace.not()) {
-            callback.onGetFaceFeature(faceId, faceFeature.featureData, getRecognizeInfo(faceId))
+            callback.onGetFaceFeature(
+                faceId,
+                faceFeature.featureData,
+                getRecognizeInfo(faceId),
+                nv21
+            )
             changeRecognizeStatus(faceId, RecognizeStatus.SUCCEED)
             changeMsg(faceId, "Visitor,$faceId")
             return
@@ -731,7 +767,8 @@ internal class FaceHelper(
         private val width: Int,
         private val height: Int,
         private val faceId: Int,
-        private val faceInfo: FaceInfo
+        private val rgbFaceInfo: FaceInfo,
+        private val irFaceInfo: FaceInfo
     ) : Runnable {
 
         override fun run() {
@@ -741,14 +778,14 @@ internal class FaceHelper(
             val livenessList: MutableList<LivenessInfo> = mutableListOf()
             synchronized(detectInfoEngine) {
                 if (configuration.livenessType == LivenessType.RGB) {
+                    //仅在RGB活体检测时生效
                     //人脸属性检测（年龄/性别/人脸3D角度），最多支持4张人脸信息检测，超过部分返回未知
-                    //（活体仅支持单张人脸检测，超出返回未知）
                     val processResult = detectInfoEngine.process(
                         rgbNV21,
                         width,
                         height,
                         FaceEngine.CP_PAF_NV21,
-                        listOf(faceInfo),
+                        listOf(rgbFaceInfo),
                         detectInfoMask
                     )
                     if (processResult == ErrorInfo.MOK) {
@@ -806,7 +843,7 @@ internal class FaceHelper(
                         width,
                         height,
                         FaceEngine.CP_PAF_NV21,
-                        listOf(faceInfo),
+                        listOf(irFaceInfo),
                         detectInfoMask
                     )
                     livenessResult = if (processResult == ErrorInfo.MOK) {
@@ -855,9 +892,9 @@ internal class FaceHelper(
                 )
             }
             if (result == ErrorInfo.MOK) {
-                onFaceFeatureInfoGet(faceFeature, faceId, result)
+                onFaceFeatureInfoGet(faceFeature, faceId, result, rgbNV21)
             } else {
-                onFaceFeatureInfoGet(null, faceId, result)
+                onFaceFeatureInfoGet(null, faceId, result, rgbNV21)
                 onError(
                     FaceErrorType.EXTRACT_FEATURE,
                     result,
