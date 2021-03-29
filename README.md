@@ -261,6 +261,52 @@ fun extractFaceFeature(bitmap: Bitmap?): ByteArray?
   */
 fun destroy()
 ```
+>  人脸检测 FaceDetect (可以自行封装成单例模式)
+* 初始化
+```kotlin
+/**
+  * 初始化人脸引擎
+  * @param context 上下文
+  * @param enableImageQuality 启用图片质量检测
+  * @param detectFaceMaxNum 检测人脸数量
+  * @param detectFaceScaleVal 识别的最小人脸比例，取值范围[2,32]
+  * @param detectFaceOrient 人脸检测角度
+  * [DetectFaceOrient.ASF_OP_0_ONLY]
+  * [DetectFaceOrient.ASF_OP_90_ONLY]
+  * [DetectFaceOrient.ASF_OP_180_ONLY]
+  * [DetectFaceOrient.ASF_OP_270_ONLY]
+  * [DetectFaceOrient.ASF_OP_ALL_OUT]
+  */
+fun init(
+    context: Context,
+    enableImageQuality: Boolean = false,
+    detectFaceMaxNum: Int,
+    detectFaceScaleVal: Int = 16,
+    detectFaceOrient: DetectFaceOrient = DetectFaceOrient.ASF_OP_0_ONLY
+)
+```
+* 人脸检测回调
+```kotlin
+/**
+  * 人脸检测回调
+  */
+fun setFaceDetectCallback(callback: FaceDetectCallback?)
+```
+* 销毁资源
+```kotlin
+* 传入预览数据
+/**
+  * 传入预览数据
+  */
+fun onPreviewFrame(rgbNV21: ByteArray,previewWidth: Int,previewHeight: Int)
+```
+* 销毁资源
+```kotlin
+/**
+  * 销毁资源
+  */
+fun destroy()
+```
 >  人脸特征码转换工具 FeatureCovertUtil
 * ByteArray特征码数据转为16进制字符串
 ```kotlin
