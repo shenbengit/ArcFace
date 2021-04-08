@@ -123,7 +123,7 @@ class FaceServer {
     }
 
     /**
-     * 通过Bitmap提取特征码
+     * 通过Bitmap提取特征码，仅提取一张人脸
      * 最好在子线程运行
      *
      * @return 特征码
@@ -146,36 +146,64 @@ class FaceServer {
         )
         if (code == ArcSoftImageUtilError.CODE_SUCCESS) {
             //人脸检测
-            val faceInfoList: List<FaceInfo> = ArrayList()
-            synchronized(faceEngine) {
-                val detectFaceResult = faceEngine.detectFaces(
-                    imageData,
-                    alignedBitmap.width,
-                    alignedBitmap.height,
-                    FaceEngine.CP_PAF_BGR24,
-                    faceInfoList
-                )
-                if (detectFaceResult == ErrorInfo.MOK && faceInfoList.isNotEmpty()) {
-                    val faceFeature = FaceFeature()
-                    val extractResult = faceEngine.extractFaceFeature(
-                        imageData,
-                        alignedBitmap.width,
-                        alignedBitmap.height,
-                        FaceEngine.CP_PAF_BGR24,
-                        faceInfoList[0],
-                        faceFeature
-                    )
-                    if (extractResult == ErrorInfo.MOK) {
-                        feature = faceFeature.featureData
-                    } else {
-                        LogUtil.e("${TAG}extractFaceFeature-extractFaceFeature: $extractResult")
-                    }
-                } else {
-                    LogUtil.e("${TAG}extractFaceFeature-detectFaces: ${detectFaceResult}, faceInfoList.size: ${faceInfoList.size}")
-                }
-            }
+            feature = extractFaceFeature(
+                imageData,
+                alignedBitmap.width,
+                alignedBitmap.height,
+                FaceEngine.CP_PAF_BGR24
+            )
         } else {
             LogUtil.e("${TAG}extractFaceFeature-bitmapToImageData: $code")
+        }
+        return feature
+    }
+
+    /**
+     * 摄像机预览数据提取人脸特征码，仅提取一张人脸
+     * 最好在子线程运行
+     *
+     * @param nv21 摄像机数据
+     * @param width 预览宽度
+     * @param height 预览高度
+     */
+    fun extractFaceFeature(nv21: ByteArray, width: Int, height: Int): ByteArray? {
+        return extractFaceFeature(nv21, width, height, FaceEngine.CP_PAF_NV21)
+    }
+
+    private fun extractFaceFeature(
+        byteArray: ByteArray,
+        width: Int,
+        height: Int,
+        format: Int
+    ): ByteArray? {
+        var feature: ByteArray? = null
+        synchronized(faceEngine) {
+            val faceInfoList: List<FaceInfo> = ArrayList()
+            val detectFaceResult = faceEngine.detectFaces(
+                byteArray,
+                width,
+                height,
+                format,
+                faceInfoList
+            )
+            if (detectFaceResult == ErrorInfo.MOK && faceInfoList.isNotEmpty()) {
+                val faceFeature = FaceFeature()
+                val extractResult = faceEngine.extractFaceFeature(
+                    byteArray,
+                    width,
+                    height,
+                    format,
+                    faceInfoList[0],
+                    faceFeature
+                )
+                if (extractResult == ErrorInfo.MOK) {
+                    feature = faceFeature.featureData
+                } else {
+                    LogUtil.e("${TAG}extractFaceFeature-extractFaceFeature: $extractResult")
+                }
+            } else {
+                LogUtil.e("${TAG}extractFaceFeature-detectFaces: ${detectFaceResult}, faceInfoList.size: ${faceInfoList.size}")
+            }
         }
         return feature
     }
