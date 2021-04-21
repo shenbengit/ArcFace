@@ -78,19 +78,13 @@ class MainActivity : AppCompatActivity() {
                 println("无人------------->")
             }
 
-            /**
-             * 如果不想自动比对的话，可以通过此接口返回识别到的人脸特征码，仅在[FaceConfiguration.enableCompareFace] 为false时才会回调
-             * <p>运行在子线程</p>
-             *
-             * @param faceId 人脸Id
-             * @param feature 人脸特征码
-             * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
-             */
             override fun onGetFaceFeature(
                 faceId: Int,
                 feature: ByteArray,
                 recognizeInfo: RecognizeInfo,
-                nv21: ByteArray
+                nv21: ByteArray,
+                width: Int,
+                height: Int
             ) {
                 Log.i(
                     "MainActivity",
@@ -98,19 +92,13 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            /**
-             * 识别成功后结果回调，仅回调一次，直到人脸离开画面
-             * <p>运行在子线程</p>
-             *
-             * @param bean 识别的数据 [faceFeatureList] 的子项
-             * @param similar 识别通过的相似度
-             * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
-             * @return 人脸绘制框上成功时绘制的文字
-             */
             override fun onRecognized(
                 bean: FaceFeatureDataBean,
                 similar: Float,
-                recognizeInfo: RecognizeInfo
+                recognizeInfo: RecognizeInfo,
+                nv21: ByteArray,
+                width: Int,
+                height: Int
             ): String? {
                 return "识别成功,${similar}"
             }
@@ -138,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             .setDetectFaceOrient(DetectFaceOrient.ASF_OP_ALL_OUT)//人脸检测角度
             .enableRecognize(true)//是否需要识别
             .setDetectFaceScaleVal(30)//用于数值化表示的最小人脸尺寸，该尺寸代表人脸尺寸相对于图片长边的占比。
-            .setLivenessType(LivenessType.IR)//活体检测类型
+            .setLivenessType(LivenessType.NONE)//活体检测类型
             .setRgbLivenessThreshold(0.6f)//设置RGB可见光活体阈值
             .setIrLivenessThreshold(0.7f)//设置IR红外活体阈值
             .enableImageQuality(true)//是否启用图像质量阈值
