@@ -730,21 +730,20 @@ internal class FaceHelper(
         }
     }
 
-    private fun retryLivenessDetectDelayed(faceId: Int) {
+    fun retryLivenessDetectDelayed(faceId: Int) {
         mHandler.postDelayed({
             changeMsg(faceId, "$faceId")
             changeLiveness(faceId, LivenessInfo.UNKNOWN)
         }, configuration.livenessFailedRetryInterval)
     }
 
-    private fun retryRecognizeDelayed(faceId: Int) {
+    fun retryRecognizeDelayed(faceId: Int) {
         changeRecognizeStatus(faceId, RecognizeStatus.FAILED)
         mHandler.postDelayed({
             changeMsg(faceId, "$faceId")
             changeRecognizeStatus(faceId, RecognizeStatus.TO_RETRY)
         }, configuration.recognizeFailedRetryInterval)
     }
-
 
     /**
      * 人脸信息检测线程
