@@ -1,6 +1,8 @@
 # ArcFace
 基于[虹软人脸识别](https://ai.arcsoft.com.cn/)增值版Android SDK V3.1,封装人脸识别方法。
-> [增值版Android SDK V3.1文档](https://github.com/shenbengit/ArcFace/blob/master/ARCSOFT_ARC_FACE_DEVELOPER'S_GUIDE_V3.1.pdf)
+> [增值版Android SDK V3.1文档](https://github.com/shenbengit/ArcFace/blob/master/ARCSOFT_ARC_FACE_DEVELOPER'S_GUIDE_V3.1.pdf)    
+> [虹软人脸识别4.0封装](https://github.com/shenbengit/ArcFace4.0)
+
 ## 效果展示
 限制识别区域
 
@@ -95,13 +97,17 @@ allprojects {
          * @param faceId 人脸Id
          * @param feature 人脸特征码
          * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
-         * @param camera预览数据
+         * @param camera 预览数据
+         * @param width 预览数据宽度
+         * @param height 预览数据高度
          */
          override fun onGetFaceFeature(
              faceId: Int,
              feature: ByteArray,
              recognizeInfo: RecognizeInfo,
-             nv21: ByteArray
+             nv21: ByteArray,
+             width: Int,
+             height: Int
          ) {
              
          }
@@ -113,12 +119,19 @@ allprojects {
          * @param bean 识别的数据 [faceFeatureList] 的子项
          * @param similar 识别通过的相似度
          * @param recognizeInfo 识别到的其他信息，包含活体值、年龄、性别、人脸角度等信息
+         * @param camera 预览数据
+         * @param width 预览数据宽度
+         * @param height 预览数据高度
+         * 
          * @return 人脸绘制框上成功时绘制的文字
          */
         override fun onRecognized(
             bean: FaceFeatureDataBean,
             similar: Float,
-            recognizeInfo: RecognizeInfo
+            recognizeInfo: RecognizeInfo,
+            nv21: ByteArray,
+            width: Int,
+            height: Int
         ): String? {
             println("人脸比对成功-相似度:" + similar + ",recognizeInfo:" + recognizeInfo.toString())
             return "识别成功"
@@ -191,6 +204,16 @@ allprojects {
     //设置人脸相关参数，如果确认人脸已经激活且直接进行人脸识别则设备true
     faceCameraView.setConfiguration(configuration, false)
     faceCameraView.setLifecycleOwner(this)
+    //摄像头开启异常监听
+    faceCameraView.setOnCameraListener(object : OnCameraListener {
+            override fun onRgbCameraError(exception: Exception) {
+
+            }
+
+            override fun onIrCameraError(exception: Exception) {
+                
+            }
+     })
     //在合适的地方调用此方法，设置为true且人脸已激活才会提交预览数据
     faceCameraView.enableFace(true)
 ```
@@ -255,6 +278,19 @@ fun compareFaceFeature(feature1: ByteArray, feature2: ByteArray): Float
   * @return 特征码
   */
 fun extractFaceFeature(bitmap: Bitmap?): ByteArray?
+```
+* 通过nv21数据提取特征码
+```kotlin
+/**
+  * 摄像机预览数据提取人脸特征码
+  * 最好在子线程运行
+  * @param nv21 摄像机数据
+  * @param width 预览宽度
+  * @param height 预览高度
+  * 
+  * @return 特征码
+  */
+fun extractFaceFeature(nv21: ByteArray, width: Int, height: Int): ByteArray?
 ```
 * 销毁资源
 ```kotlin
