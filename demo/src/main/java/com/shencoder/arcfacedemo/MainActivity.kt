@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.shencoder.arcface.callback.OnCameraListener
 import com.shencoder.arcface.callback.OnErrorCallback
 import com.shencoder.arcface.callback.OnRecognizeCallback
 import com.shencoder.arcface.configuration.*
@@ -177,6 +178,15 @@ class MainActivity : AppCompatActivity() {
             .build()
         faceCameraView.setConfiguration(configuration, FaceActive.isActivated(this), true)
         faceCameraView.setLifecycleOwner(this)
+        faceCameraView.setOnCameraListener(object : OnCameraListener {
+            override fun onRgbCameraError(exception: Exception) {
+
+            }
+
+            override fun onIrCameraError(exception: Exception) {
+
+            }
+        })
 //        faceCameraView.enableIrDetectFaces(true)
 //        Handler(Looper.getMainLooper()).postDelayed({
 //            val activated = FaceActive.isActivated(this)
