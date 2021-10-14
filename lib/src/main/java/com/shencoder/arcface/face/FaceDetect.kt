@@ -64,6 +64,7 @@ class FaceDetect {
 
     private var mFaceDetectCallback: FaceDetectCallback? = null
 
+    @JvmOverloads
     fun init(
         context: Context,
         enableImageQuality: Boolean = false,

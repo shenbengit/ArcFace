@@ -12,7 +12,6 @@ import android.util.TypedValue
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import com.shencoder.arcface.R
 import android.graphics.LinearGradient
 import kotlin.math.min
@@ -246,25 +245,24 @@ class ViewfinderView @JvmOverloads constructor(
         val array = context.obtainStyledAttributes(attrs, R.styleable.ViewfinderView)
         maskColor = array.getColor(
             R.styleable.ViewfinderView_maskColor,
-            ContextCompat.getColor(context, R.color.viewfinder_mask)
+            resources.getColor(R.color.viewfinder_mask)
         )
         frameColor = array.getColor(
             R.styleable.ViewfinderView_frameColor,
-            ContextCompat.getColor(context, R.color.viewfinder_frame)
+            resources.getColor(R.color.viewfinder_frame)
         )
         cornerColor = array.getColor(
             R.styleable.ViewfinderView_cornerColor,
-            ContextCompat.getColor(context, R.color.viewfinder_corner)
+            resources.getColor(R.color.viewfinder_corner)
         )
         laserColor = array.getColor(
             R.styleable.ViewfinderView_laserColor,
-            ContextCompat.getColor(context, R.color.viewfinder_laser)
+            resources.getColor(R.color.viewfinder_laser)
         )
-        //        resultPointColor = array.getColor(R.styleable.ViewfinderView_resultPointColor, ContextCompat.getColor(context,R.color.viewfinder_result_point_color));
         labelText = array.getString(R.styleable.ViewfinderView_labelText)
         labelTextColor = array.getColor(
             R.styleable.ViewfinderView_labelTextColor,
-            ContextCompat.getColor(context, R.color.viewfinder_text_color)
+            resources.getColor(R.color.viewfinder_text_color)
         )
         labelTextSize = array.getDimension(
             R.styleable.ViewfinderView_labelTextSize,
@@ -374,7 +372,7 @@ class ViewfinderView @JvmOverloads constructor(
     }
 
     fun setLabelTextColorResource(@ColorRes id: Int) {
-        labelTextColor = ContextCompat.getColor(context, id)
+        labelTextColor = resources.getColor(id)
     }
 
     fun setLabelTextSize(textSize: Float) {

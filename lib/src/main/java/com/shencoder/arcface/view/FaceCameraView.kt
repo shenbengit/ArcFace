@@ -1,6 +1,5 @@
 package com.shencoder.arcface.view
 
-import android.bluetooth.BluetoothClass
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet

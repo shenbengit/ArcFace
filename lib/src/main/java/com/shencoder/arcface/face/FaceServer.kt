@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.IntRange
 import com.arcsoft.face.*
+import com.arcsoft.face.enums.CompareModel
 import com.arcsoft.face.enums.DetectFaceOrientPriority
 import com.arcsoft.face.enums.DetectMode
 import com.arcsoft.imageutil.ArcSoftImageFormat
@@ -42,6 +43,7 @@ class FaceServer {
      * [DetectFaceOrient.ASF_OP_270_ONLY]
      * @param detectFaceScaleVal 识别的最小人脸比例，取值范围[2,32]
      */
+    @JvmOverloads
     fun init(
         context: Context,
         faceOrient: DetectFaceOrient = DetectFaceOrient.ASF_OP_0_ONLY,
@@ -72,9 +74,11 @@ class FaceServer {
      *
      * @return null:说明比对列表为空或者人脸引擎出错；返回相似度最大的[features]中的数据
      */
+    @JvmOverloads
     fun compareFaceFeature(
         faceFeature: FaceFeature,
-        features: List<FaceFeatureDataBean>
+        features: List<FaceFeatureDataBean>,
+        compareModel: CompareModel = CompareModel.LIFE_PHOTO
     ): CompareResult? {
         if (features.isEmpty()) {
             return null
@@ -88,7 +92,12 @@ class FaceServer {
             features.forEachIndexed { index, bean ->
                 tempFaceFeature.featureData = bean.feature
                 val result =
-                    faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar)
+                    faceEngine.compareFaceFeature(
+                        faceFeature,
+                        tempFaceFeature,
+                        compareModel,
+                        faceSimilar
+                    )
                 if (result == ErrorInfo.MOK) {
                     if (faceSimilar.score > maxSimilar) {
                         maxSimilar = faceSimilar.score
@@ -105,16 +114,23 @@ class FaceServer {
         return null
     }
 
+
     /**
      * 比对两组特征码 1:1
      * @return 返回相似度
      */
-    fun compareFaceFeature(feature1: ByteArray, feature2: ByteArray): Float {
+    @JvmOverloads
+    fun compareFaceFeature(
+        feature1: ByteArray,
+        feature2: ByteArray,
+        compareModel: CompareModel = CompareModel.LIFE_PHOTO
+    ): Float {
         val faceFeature1 = FaceFeature(feature1)
         val faceFeature2 = FaceFeature(feature2)
         val similar = FaceSimilar()
         synchronized(faceEngine) {
-            val result = faceEngine.compareFaceFeature(faceFeature1, faceFeature2, similar)
+            val result =
+                faceEngine.compareFaceFeature(faceFeature1, faceFeature2, compareModel, similar)
             if (result != ErrorInfo.MOK) {
                 LogUtil.e("${TAG}compareFaceFeature-errorCode: $result")
             }
@@ -170,7 +186,7 @@ class FaceServer {
         return extractFaceFeature(nv21, width, height, FaceEngine.CP_PAF_NV21)
     }
 
-    private fun extractFaceFeature(
+    fun extractFaceFeature(
         byteArray: ByteArray,
         width: Int,
         height: Int,
