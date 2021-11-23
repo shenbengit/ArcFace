@@ -212,16 +212,19 @@ object FaceConstant {
         sLivenessErrorMsgArray.put(LivenessInfo.IR_IMAGE_ERROR, "IR图像异常")
     }
 
+    @JvmStatic
     fun getFaceErrorMsg(status: Int): String {
         val msg = sFaceErrorMsgArray.get(status)
         return if (msg.isNullOrBlank()) UNKNOWN_ERROR else msg
     }
 
+    @JvmStatic
     fun getImageErrorMsg(status: Int): String {
         val msg = sImageErrorMsgArray.get(status)
         return if (msg.isNullOrBlank()) UNKNOWN_ERROR else msg
     }
 
+    @JvmStatic
     fun getLivenessErrorMsg(status: Int): String {
         val msg = sLivenessErrorMsgArray.get(status)
         return if (msg.isNullOrBlank()) UNKNOWN_ERROR else msg

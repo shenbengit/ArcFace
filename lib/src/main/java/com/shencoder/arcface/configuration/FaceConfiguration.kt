@@ -59,7 +59,7 @@ class FaceConfiguration internal constructor(builder: Builder) {
     val livenessType: LivenessType = builder.livenessType
 
     /**
-     * 设置RGB可见光活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.6f
+     * 设置RGB可见光活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.5f
      */
     val rgbLivenessThreshold: Float = builder.rgbLivenessThreshold
 
@@ -214,9 +214,9 @@ class FaceConfiguration internal constructor(builder: Builder) {
             apply { this.livenessType = livenessType }
 
         /**
-         * 设置RGB可见光活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.6f
+         * 设置RGB可见光活体阈值，有效值范围(0.0f,1.0f)，推荐值为0.5f
          */
-        internal var rgbLivenessThreshold: Float = 0.6f
+        internal var rgbLivenessThreshold: Float = 0.5f
         fun setRgbLivenessThreshold(
             @FloatRange(
                 from = 0.0,
