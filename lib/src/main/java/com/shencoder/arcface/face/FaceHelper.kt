@@ -471,6 +471,7 @@ internal class FaceHelper(
                 && previewInfo.imageQuality < configuration.imageQualityThreshold
             ) {
                 //启用图片质量检测并且图片质量小于阈值，跳过
+                changeMsg(previewInfo.faceId, "图片质量过低，${previewInfo.imageQuality}")
                 continue
             }
             if (previewInfo.recognizeAreaValid.not()) {
@@ -641,7 +642,6 @@ internal class FaceHelper(
                 ) {
                     //错误码不为检测置信度低或者在尝试最大次数后，特征提取仍然失败，则认为识别未通过
                     recognizeInfo.resetExtractFeatureErrorRetryCount()
-                    changeRecognizeStatus(faceId, RecognizeStatus.FAILED)
                     retryRecognizeDelayed(faceId)
                 } else {
                     changeRecognizeStatus(faceId, RecognizeStatus.TO_RETRY)

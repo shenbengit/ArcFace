@@ -31,6 +31,7 @@ import io.fotoapparat.preview.FrameProcessor
 import io.fotoapparat.selector.*
 import io.fotoapparat.view.CameraView
 import com.shencoder.arcface.constant.FaceConstant
+import com.shencoder.arcface.constant.RequestLivenessStatus
 import com.shencoder.arcface.face.FaceDetect
 
 /**
@@ -182,6 +183,7 @@ class FaceCameraView @JvmOverloads constructor(
             if (mFaceConfiguration.livenessType != LivenessType.IR) {
                 post { stopIrCamera() }
             }
+            irFaceRectView.clearFaceInfo()
         }
     }
 
@@ -200,6 +202,8 @@ class FaceCameraView @JvmOverloads constructor(
                     return
                 }
             }
+        } else {
+            rgbFaceRectView.clearFaceInfo()
         }
         this.enableFace = enableFace
     }
@@ -370,7 +374,8 @@ class FaceCameraView @JvmOverloads constructor(
                         color = mFaceConfiguration.drawFaceRect.successColor
                     }
                     recognizeInfo.recognizeStatus == RecognizeStatus.FAILED
-                            || recognizeInfo.liveness == LivenessInfo.NOT_ALIVE -> {
+                            || recognizeInfo.liveness == LivenessInfo.NOT_ALIVE
+                            || recognizeInfo.liveness == RequestLivenessStatus.FAILED -> {
                         color = mFaceConfiguration.drawFaceRect.failedColor
                     }
 
