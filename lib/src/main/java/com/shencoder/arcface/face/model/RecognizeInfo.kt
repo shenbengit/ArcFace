@@ -16,6 +16,7 @@ class RecognizeInfo(val faceId: Int) {
     /**
      * 活体值
      */
+    @Volatile
     var liveness = LivenessInfo.UNKNOWN
 
     /**
@@ -46,6 +47,7 @@ class RecognizeInfo(val faceId: Int) {
     /**
      * 人脸识别相关状态
      */
+    @Volatile
     internal var recognizeStatus = RecognizeStatus.TO_RETRY
 
     /**

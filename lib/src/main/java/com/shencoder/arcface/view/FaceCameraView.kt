@@ -183,7 +183,7 @@ class FaceCameraView @JvmOverloads constructor(
             if (mFaceConfiguration.livenessType != LivenessType.IR) {
                 post { stopIrCamera() }
             }
-            irFaceRectView.clearFaceInfo()
+            post { irFaceRectView.clearFaceInfo() }
         }
     }
 
@@ -195,6 +195,7 @@ class FaceCameraView @JvmOverloads constructor(
         if (this.enableFace == enableFace) {
             return
         }
+        this.enableFace = enableFace
         if (enableFace) {
             if (this::faceHelper.isInitialized.not()) {
                 val result = initFaceHelper()
@@ -203,9 +204,11 @@ class FaceCameraView @JvmOverloads constructor(
                 }
             }
         } else {
-            rgbFaceRectView.clearFaceInfo()
+            post {
+                rgbFaceRectView.clearFaceInfo()
+                faceHelper.clearLeftFace(emptyList())
+            }
         }
-        this.enableFace = enableFace
     }
 
     fun setLifecycleOwner(owner: LifecycleOwner?) {
@@ -404,9 +407,13 @@ class FaceCameraView @JvmOverloads constructor(
                     )
                 }
             }
-            rgbFaceRectView.drawRealtimeFaceInfo(rgbList)
+            if (enableFace) {
+                rgbFaceRectView.drawRealtimeFaceInfo(rgbList)
+            }
             if (mFaceConfiguration.livenessType == LivenessType.IR) {
-                irFaceRectView.drawRealtimeFaceInfo(irList)
+                if (enableIrDetectFaces) {
+                    irFaceRectView.drawRealtimeFaceInfo(irList)
+                }
             }
         }
     }

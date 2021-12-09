@@ -431,7 +431,7 @@ internal class FaceHelper(
     /**
      * 删除已经离开的人脸
      */
-    private fun clearLeftFace(faceInfoList: List<FaceInfo>) {
+    fun clearLeftFace(faceInfoList: List<FaceInfo>) {
         val iterator = recognizeInfoMap.entries.iterator()
         while (iterator.hasNext()) {
             val next = iterator.next()
@@ -467,6 +467,12 @@ internal class FaceHelper(
         faceInfoList: List<FacePreviewInfo>
     ) {
         for (previewInfo in faceInfoList) {
+            val recognizeInfo = getRecognizeInfo(previewInfo.faceId)
+
+            if (recognizeInfo.recognizeStatus == RecognizeStatus.SUCCEED) {
+                //如果识别成功，直接return
+                continue
+            }
             if (configuration.enableImageQuality
                 && previewInfo.imageQuality < configuration.imageQualityThreshold
             ) {
@@ -478,7 +484,6 @@ internal class FaceHelper(
                 //不在识别区域，跳过
                 continue
             }
-            val recognizeInfo = getRecognizeInfo(previewInfo.faceId)
 
             if (configuration.livenessType != LivenessType.NONE
                 && recognizeInfo.recognizeStatus != RecognizeStatus.SUCCEED
